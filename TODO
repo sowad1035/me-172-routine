@@ -1,0 +1,45 @@
+- classroom
+    - full name
+    - short name / code
+    - capacity
+    - type (theory, lab, computer lab, general classroom)
+
+- teacher
+    [X] full name
+    [X] seniority level
+    [X] rank
+    [X] maximum teaching load per day/week
+    [] preferred time slots
+
+- courses
+    - title and short code
+    - credit hours
+    - offered by which department
+    - assigned to which teacher
+    - type (theory, lab, computer lab)
+    - duration (1, 2 or 3)
+
+- 8 AM to 5 PM : 1 hour, 2 hours and 3 hours
+
+- section
+    - name / code
+    - department
+    - number of students
+    - assignmend home classroom (must)
+
+- sub-section for labs
+
+- conflicts
+    - two sec in same classroom at same time
+    - teacher assigned to multiple classes at same time
+    - classroom capacity
+
+- senior teacher preferred time
+
+- separate timetable
+    - each section
+    - each teacher
+    - each classroom
+    - each course
+
+- export in pdf format

@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client"
+  previewFeatures = ["driverAdapters"]
+  output          = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Teacher {
+  id        String   @id @default(cuid())
+  name      String
+  seniority String
+  rank      Int
+  maxLoad   Int
+  // preferredTimeSlots String[] // [cite: 21] (optional, can be implemented later)
+  courses   Course[]
+}
+
+model Classroom {
+  id       String        @id @default(cuid())
+  name     String
+  code     String
+  capacity Int
+  type     ClassroomType @default(Theory)
+
+  sections Section[]
+}
+
+enum ClassroomType {
+  Theory
+  Lab
+  ComputerLab
+}
+
+model Section {
+  id               String      @id @default(cuid())
+  code             String
+  department       Departments
+  numberOfStudents Int
+  homeClassroomId  String      @unique
+  homeClassroom    Classroom   @relation(fields: [homeClassroomId], references: [id])
+}
+
+model Course {
+  id          String      @id @default(cuid())
+  title       String
+  shortCode   String
+  creditHours Float
+  department  Departments
+  term        Terms
+  teacherId   String
+  teacher     Teacher     @relation(fields: [teacherId], references: [id])
+  type        CourseType
+  duration    Int
+}
+
+enum Terms {
+  L1_T1
+  L1_T2
+  L2_T1
+  L2_T2
+  L3_T1
+  L3_T2
+  L4_T1
+  L4_T2
+}
+
+enum CourseType {
+  Theory
+  Lab
+  ComputerLab
+}
+
+enum Departments {
+  CSE
+  EEE
+  ME
+  CE
+  ARCH
+  BME
+  URP
+  NAME
+  MME
+  CHEM
+  IPE
+  NCE
+  WRE
+}
