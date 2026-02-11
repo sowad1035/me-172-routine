@@ -45,6 +45,9 @@ export default function RootLayout({
                 <li>
                   <a className="hover:bg-gray-100 p-2 rounded" href="/courses">Courses</a>
                 </li>
+                <li>
+                  <a className="hover:bg-gray-100 p-2 rounded" href="/">Generate</a>
+                </li>
               </ul>
             </div>
           </div>
