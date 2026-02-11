@@ -43,3 +43,19 @@
     - each course
 
 - export in pdf format
+
+
+
+
+teacher nickname
+        professor
+
+
+offered to multiple departments
+        cross-listed courses
+offered by multiple teachers
+        co-taught courses
+
+form error handling
+        invalid input data
+        scheduling conflicts

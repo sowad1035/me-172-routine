@@ -3,22 +3,28 @@
 
 generator client {
   provider        = "prisma-client"
-  previewFeatures = ["driverAdapters"]
-  output          = "../app/generated/prisma"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 model Teacher {
-  id        String   @id @default(cuid())
-  name      String
-  seniority String
-  rank      Int
-  maxLoad   Int
+  id                String             @id @default(cuid())
+  name              String
+  nickname          String
+  seniority         Seniority 
+  rank              Int
+  maxLoad           Int
   // preferredTimeSlots String[] // [cite: 21] (optional, can be implemented later)
-  courses   Course[]
+  offeredToTeachers OfferedToTeacher[]
+}
+
+enum Seniority {
+  Lecturer
+  AssistantProfessor
+  AssociateProfessor
+  Professor
 }
 
 model Classroom {
@@ -46,17 +52,39 @@ model Section {
   homeClassroom    Classroom   @relation(fields: [homeClassroomId], references: [id])
 }
 
+// offered to multiple departments
+//        cross-listed courses
+// offered by multiple teachers
+//        co-taught courses
+
 model Course {
   id          String      @id @default(cuid())
   title       String
   shortCode   String
   creditHours Float
-  department  Departments
-  term        Terms
-  teacherId   String
-  teacher     Teacher     @relation(fields: [teacherId], references: [id])
+  offeredTo   OfferedTo[]
   type        CourseType
   duration    Int
+}
+
+model OfferedTo {
+  id         String      @id @default(cuid())
+  courseId   String
+  department Departments
+  term       Terms
+
+  course Course @relation(fields: [courseId], references: [id])
+
+  offeredToTeachers OfferedToTeacher[]
+}
+
+model OfferedToTeacher {
+  id          String @id @default(cuid())
+  offeredToId String
+  teacherId   String
+
+  offeredTo OfferedTo @relation(fields: [offeredToId], references: [id])
+  teacher   Teacher   @relation(fields: [teacherId], references: [id])
 }
 
 enum Terms {

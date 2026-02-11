@@ -13,13 +13,17 @@ export default function Home() {
                             <input type="text" name="name" className="w-full border rounded p-2" placeholder="Enter teacher name" />
                         </div>
                         <div>
+                            <label className="block mb-2">Nickname:</label>
+                            <input type="text" name="nickname" className="w-full border rounded p-2" placeholder="Enter teacher nickname" />
+                        </div>
+                        <div>
                             <label className="block mb-2">Seniority Level:</label>
                             <select name="seniority" className="w-full border rounded p-2">
                                 <option value="">Select seniority level</option>
-                                <option value="lecturer">Lecturer</option>
-                                <option value="assistant_professor">Assistant Professor</option>
-                                <option value="associate_professor">Associate Professor</option>
-
+                                <option value="Lecturer">Lecturer</option>
+                                <option value="AssistantProfessor">Assistant Professor</option>
+                                <option value="AssociateProfessor">Associate Professor</option>
+                                <option value="Professor">Professor</option>
                             </select>
                         </div>
                         <div>
