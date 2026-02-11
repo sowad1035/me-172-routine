@@ -1,5 +1,6 @@
 import { departments } from "@/app/lib/helper";
 import { create } from "@/app/lib/sections";
+import SubmitButton from "@/app/lib/SubmitButton";
 import prisma from "@/lib/prisma";
 import Form from "next/form";
 
@@ -50,12 +51,7 @@ export default async function Sections() {
                                 </svg>
                                 <span className="ml-2">Cancel</span>
                             </a>
-                            <button className="flex items-cetner bg-red-800 text-white px-4 py-2 rounded hover:cursor-pointer" type="submit">
-                                <span className="mr-2">Add Information</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                </svg>
-                            </button>
+                            <SubmitButton />
                         </div>
                     </div>
                 </Form>
