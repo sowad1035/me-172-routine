@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import { departments } from "./helper"
-import { Departments } from "../generated/prisma/enums"
+import { Departments } from "@/generated/prisma/enums"
 
 export async function create(formData: FormData) {
     'use server'
