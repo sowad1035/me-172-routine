@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Classrooms() {
 
     const classrooms = await prisma.classroom.findMany({ orderBy: { name: 'asc' } });
