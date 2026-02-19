@@ -4,6 +4,8 @@ import SubmitButton from "@/app/lib/SubmitButton";
 import prisma from "@/lib/prisma";
 import Form from "next/form";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Sections() {
 
     const classrooms = await prisma.classroom.findMany({
