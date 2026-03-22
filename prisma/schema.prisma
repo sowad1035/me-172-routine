@@ -53,11 +53,6 @@ model Section {
   homeClassroom    Classroom   @relation(fields: [homeClassroomId], references: [id])
 }
 
-// offered to multiple departments
-//        cross-listed courses
-// offered by multiple teachers
-//        co-taught courses
-
 model Course {
   id          String      @id @default(cuid())
   title       String
