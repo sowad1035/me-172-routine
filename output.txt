@@ -1,0 +1,124 @@
+Submission guidelines
+1. Project Report:
+Submit a well-structured report that includes a clear objective, problem statement, and
+a thorough explanation of the approach taken to solve the problem.
+2. Code and Explanation:
+Include the complete source code along with detailed explanations of each major section or
+function, describing what each part of the code is responsible for.
+3. Results and Discussion:
+Present and discuss key results, highlighting significant observations, findings, and any
+challenges faced during development.
+4. Presentation Slides:
+Prepare a concise and informative presentation that summarizes the project,
+methodology, key outcomes, and conclusions.
+
+Automated Class Routine Generation System Using C Programming
+Design and implement an automated class routine (timetable) generation system using
+programming language. The objective of this project is to simulate a real-world academic
+scheduling problem and develop a robust, and flexible solution using structured programming
+concepts. The program should allow a user (acting as an academic coordinator) to input and
+manage institutional resources such as classrooms, teachers, courses, and student sections, and
+then automatically generate feasible class routines based on given constraints and priorities.
+Functional Requirements:
+1. The system must support adding any number of classrooms, each having a full name, short
+name/code, capacity, and type (e.g., theory lab, computer lab, general classroom).
+2. The system must allow adding any number of teachers, where each teacher has:
+a)
+
+Full name and short name
+
+b)
+
+Seniority level (e.g., numeric rank)
+
+c)
+
+Maximum teaching load per day/week
+
+d)
+
+Preferred time slots.
+
+3. The system must allow inclusion of any number of courses, each having:
+a)
+
+Course title and short code
+
+b)
+
+Credit hours
+
+c)
+
+Required class duration (1-hour, 2-hour, or 3-hour slots)
+
+d)
+
+Required classroom type (if applicable)
+
+4. The daily academic time window is 8:00 AM to 5:00 PM, which must be divisible into 1hour, 2-hour, or 3-hour slots, depending on course requirements.
+5. The system must support adding multiple sections (classes) of students, where each section
+has:
+a)
+
+Section name/code
+
+b)
+
+Number of students
+
+c)
+
+Assigned home classroom
+
+6. Each section must have a home classroom, but the system must allow assigning a different
+classroom for specific courses if required (e.g., labs or shared facilities).
+7. If needed, a section must be dividable into multiple subsections, and the routine should
+handle them independently while still avoiding conflicts.
+8. The program must automatically detect and report conflicts:
+a)
+
+Two sections assigned to the same classroom at the same time
+
+b)
+
+A teacher assigned to multiple classes at the same time
+
+c)
+
+A section scheduled for overlapping classes
+
+d)
+
+Classroom capacity being insufficient for assigned sections
+
+9. Teacher seniority must be prioritized during routine generation; such that senior teachers
+are allocated their preferred or optimal time slots before junior teachers.
+10. Each teacher rank (Professor, Associate Prof, Assistant Prof, Lecturer) has a predefined
+maximum teaching load per week, which must be enforced during routine generation.
+11. The system must generate separate timetables preview for:
+a)
+
+Each section
+
+b)
+
+Each teacher
+
+c)
+
+Each classroom
+
+d)
+
+Each course
+
+12. The system must support both full names and short names (codes) for teachers, courses,
+classrooms, and sections, and use them appropriately in outputs.
+13. All data (teachers, courses, classrooms, sections, routines) must be stored and retrieved
+using file handling so that the program supports multiple executions without data loss.
+14. The final routine output must be exportable in a printable format (e.g., pdf).
+
+Sample output:
+
+
