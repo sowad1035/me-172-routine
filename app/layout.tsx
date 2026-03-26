@@ -1,19 +1,11 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Poppins(
-  {
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
-    weight: ["400", "700"],
-  }
-);
+import Sidebar from "@/components/Sidebar";
 
 
 export const metadata: Metadata = {
-  title: "Routine",
-  description: "Routine",
+  title: "Routine - Academic Scheduler",
+  description: "Intelligent class routine generation system",
 };
 
 export default function RootLayout({
@@ -23,39 +15,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} antialiased`}
-      >
-        <div className="flex min-h-screen">
-          <div className="flex-1">
-            <div className="p-15">
-              <a href="/" className="text-3xl font-bold underline">Routine</a>
-            </div>
-            <div className="p-15 font-bold">
-              <ul className="list-none gap-5 flex flex-col">
-                <li>
-                  <a className="hover:bg-gray-100 p-2 rounded" href="/teachers">Teachers</a>
-                </li>
-                <li>
-                  <a className="hover:bg-gray-100 p-2 rounded" href="/classrooms">Classrooms</a>
-                </li>
-                <li>
-                  <a className="hover:bg-gray-100 p-2 rounded" href="/sections">Sections</a>
-                </li>
-                <li>
-                  <a className="hover:bg-gray-100 p-2 rounded" href="/courses">Courses</a>
-                </li>
-                <li>
-                  <a className="hover:bg-gray-100 p-2 rounded" href="/">Generate</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="flex-4 p-15">
-            {children}
-          </div>
-        </div>
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;900&amp;family=Space+Grotesk:wght@300;500;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,700;1,6..72,400&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+          rel="stylesheet" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+          rel="stylesheet" />
+      </head>
+      <body className="bg-surface font-body text-on-surface">
+        <Sidebar />
+        <main>
+          {children}
+        </main>
       </body>
-    </html>
+    </html >
   );
 }

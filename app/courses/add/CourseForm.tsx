@@ -61,9 +61,9 @@ export default function CourseForm({ teachers }: { teachers: { id: string, name:
                         <input type="number" step="0.25" name="credit_hours" className="w-full border rounded p-2" placeholder="Enter credit hours" />
                     </div>
                 </div>
-                <div className="space-y-4 bg-red-50 p-4 rounded">
+                <div className="space-y-4 p-4 rounded">
                     {[...Array(departmentCount)].map((_, i) => (
-                        <div key={i} className="space-y-4 bg-red-100 p-4 rounded">
+                        <div key={i} className="space-y-4 p-4 rounded">
                             <div className="flex items-center justify-between space-x-4">
                                 <div className="w-1/2">
                                     <label className="block mb-2">Offered To:</label>

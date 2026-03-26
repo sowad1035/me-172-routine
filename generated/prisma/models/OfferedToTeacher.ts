@@ -1160,6 +1160,11 @@ export type OfferedToTeacherFindManyArgs<ExtArgs extends runtime.Types.Extension
    * Skip the first `n` OfferedToTeachers.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of OfferedToTeachers.
+   */
   distinct?: Prisma.OfferedToTeacherScalarFieldEnum | Prisma.OfferedToTeacherScalarFieldEnum[]
 }
 

@@ -82,43 +82,92 @@ export default function TimetablePage({
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-                <p className="text-slate-300">Loading timetable...</p>
+            <div className="flex items-center justify-center h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950">
+                <div className="text-center">
+                    <div className="inline-block p-3 rounded-full bg-yellow-400/20 mb-4 animate-pulse">
+                        <svg
+                            className="w-8 h-8 text-yellow-400 animate-spin"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
+                            <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                            ></circle>
+                            <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                        </svg>
+                    </div>
+                    <p className="text-slate-300">Loading timetable...</p>
+                </div>
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="flex items-center justify-center h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-                <p className="text-red-400">Error: {error}</p>
-            </div>
-        );
-    }
-
-    return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8">
-            <div className="max-w-6xl mx-auto">
-                <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
-                    <div>
-                        <h1 className="text-4xl font-bold text-white">
-                            Timetable
-                        </h1>
-                        <p className="text-slate-300 mt-2">
-                            {dept} • {section} • {term}
-                        </p>
-                    </div>
-                    <button
-                        onClick={downloadImage}
-                        className="bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-500 hover:to-cyan-600 active:from-cyan-700 active:to-cyan-800 text-white px-6 py-3 rounded-lg flex items-center gap-2 font-semibold transition-all duration-200 shadow-lg hover:shadow-cyan-500/50"
-                    >
+            <div className="flex items-center justify-center h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950">
+                <div className="text-center">
+                    <div className="inline-block p-3 rounded-full bg-red-400/20 mb-4">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 24 24"
                             strokeWidth={2}
                             stroke="currentColor"
-                            className="w-5 h-5"
+                            className="w-8 h-8 text-red-400"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                        </svg>
+                    </div>
+                    <p className="text-red-400">Error: {error}</p>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 p-8 relative overflow-hidden">
+            {/* Background decoration */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-0 left-0 w-96 h-96 bg-yellow-400/5 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-400/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+            </div>
+
+            <div className="relative z-10 max-w-6xl mx-auto">
+                <div className="flex justify-between items-start mb-8 flex-wrap gap-6">
+                    <div>
+                        <h1 className="text-5xl font-bold bg-gradient-to-r from-yellow-300 to-yellow-400 bg-clip-text text-transparent mb-2">
+                            Timetable
+                        </h1>
+                        <p className="text-slate-400 text-lg">
+                            <span className="text-yellow-300 font-semibold">{dept}</span> • <span className="text-blue-300 font-semibold">{section}</span> • <span className="text-blue-300 font-semibold">{term}</span>
+                        </p>
+                    </div>
+                    <button
+                        onClick={downloadImage}
+                        className="group relative px-6 py-3 rounded-xl font-bold text-white hover:scale-105 transition-all duration-300 flex items-center gap-2"
+                    >
+                        <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-yellow-500 opacity-80 rounded-xl blur-lg group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/40 to-yellow-500/40 backdrop-blur-xl rounded-xl border border-yellow-300/50"></div>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2.5}
+                            stroke="currentColor"
+                            className="relative w-5 h-5 text-blue-950"
                         >
                             <path
                                 strokeLinecap="round"
@@ -126,11 +175,11 @@ export default function TimetablePage({
                                 d="M4.5 12a7.5 7.5 0 0015 0m-15 0a7.5 7.5 0 1115 0m-15 0H3m16.5 0H21"
                             />
                         </svg>
-                        Download
+                        <span className="relative text-blue-950">Download</span>
                     </button>
                 </div>
 
-                <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-slate-600 p-6 overflow-x-auto shadow-2xl">
+                <div className="bg-white/10 backdrop-blur-2xl rounded-3xl border border-white/20 p-8 overflow-x-auto shadow-2xl hover:border-yellow-400/30 transition-all duration-300">
                     <div dangerouslySetInnerHTML={{ __html: svgContent }} />
                 </div>
             </div>

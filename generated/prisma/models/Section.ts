@@ -1170,6 +1170,11 @@ export type SectionFindManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Skip the first `n` Sections.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Sections.
+   */
   distinct?: Prisma.SectionScalarFieldEnum | Prisma.SectionScalarFieldEnum[]
 }
 

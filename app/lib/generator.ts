@@ -69,7 +69,9 @@ const TEACHER_LOAD_LIMITS: TeacherLoadLimits = {
     Lecturer: 25,
 }
 
-export default async function generate(desiredTerm?: string) {
+export async function generate(formData: FormData) {
+    const desiredTerm = "";
+
     const days = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday']
     const allHours = Array.from({ length: 9 }, (_, i) => i + 8) // 8-16
     const beforeBreak = [8, 9, 10, 11, 12]
@@ -405,7 +407,7 @@ export default async function generate(desiredTerm?: string) {
     }
 
     console.log(`✅ Scheduling complete. Conflicts: ${allConflicts.length}`)
-    return routines
+    redirect("/?success=true")
 }
 
 // type for generated_routines.json
@@ -482,9 +484,10 @@ function generateTimetableImage(routine: RoutineEntry): string {
                     const cellWidthActual = cellWidth * assignment.duration - 4
                     const courseText = assignment.courseCode.substring(0, 15)
 
-                    svg += `<rect x="${x}" y="${y + 2}" width="${cellWidthActual}" height="${cellHeight - 4}" fill="#06B6D4" stroke="#333" stroke-width="1" rx="3"/>`
-                    svg += `<text x="${x + cellWidthActual / 2}" y="${y + 25}" font-size="11" font-weight="bold" fill="white" text-anchor="middle">${courseText}</text>`
-                    svg += `<text x="${x + cellWidthActual / 2}" y="${y + 45}" font-size="9" fill="white" text-anchor="middle">${assignment.teacherName?.substring(0, 12) || 'TBA'}</text>`
+                    svg += `<defs><linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#FFC107;stop-opacity:1" /><stop offset="100%" style="stop-color:#FFD700;stop-opacity:1" /></linearGradient></defs>`
+                    svg += `<rect x="${x}" y="${y + 2}" width="${cellWidthActual}" height="${cellHeight - 4}" fill="url(#goldGrad)" stroke="#B8860B" stroke-width="2" rx="4"/>`
+                    svg += `<text x="${x + cellWidthActual / 2}" y="${y + 25}" font-size="11" font-weight="bold" fill="#003d82" text-anchor="middle">${courseText}</text>`
+                    svg += `<text x="${x + cellWidthActual / 2}" y="${y + 45}" font-size="9" fill="#003d82" text-anchor="middle">${assignment.teacherName?.substring(0, 12) || 'TBA'}</text>`
                 }
             }
         }
@@ -550,7 +553,8 @@ function generateTeacherTimetableImage(routine: RoutineEntry, teacherName: strin
                     const courseText = assignment.courseCode.substring(0, 15)
                     const sectionText = assignment.courseTitle.substring(0, 10)
 
-                    svg += `<rect x="${x}" y="${y + 2}" width="${cellWidthActual}" height="${cellHeight - 4}" fill="#3B82F6" stroke="#333" stroke-width="1" rx="3"/>`
+                    svg += `<defs><linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#1e40af;stop-opacity:1" /><stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" /></linearGradient></defs>`
+                    svg += `<rect x="${x}" y="${y + 2}" width="${cellWidthActual}" height="${cellHeight - 4}" fill="url(#blueGrad)" stroke="#1e3a8a" stroke-width="2" rx="4"/>`
                     svg += `<text x="${x + cellWidthActual / 2}" y="${y + 20}" font-size="11" font-weight="bold" fill="white" text-anchor="middle">${courseText}</text>`
                     svg += `<text x="${x + cellWidthActual / 2}" y="${y + 40}" font-size="9" fill="white" text-anchor="middle">${sectionText}</text>`
                     svg += `<text x="${x + cellWidthActual / 2}" y="${y + 55}" font-size="8" fill="white" text-anchor="middle">${assignment.classroomCode || 'TBA'}</text>`
@@ -564,7 +568,7 @@ function generateTeacherTimetableImage(routine: RoutineEntry, teacherName: strin
     // Add legend and info
     const legendY = height - 40
     svg += `<text x="20" y="${legendY}" font-size="12" font-weight="bold">Total Classes: ${routine.assignments.length}</text>`
-    svg += `<rect x="20" y="${legendY + 10}" width="30" height="20" fill="#3B82F6" stroke="#333" stroke-width="1"/>`
+    svg += `<rect x="20" y="${legendY + 10}" width="30" height="20" fill="#3B82F6" stroke="#1e3a8a" stroke-width="1"/>`
     svg += `<text x="60" y="${legendY + 25}" font-size="11">Assigned Class</text>`
 
     svg += `</svg>`

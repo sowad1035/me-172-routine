@@ -2,15 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { departments } from "./lib/helper";
-import { useFormState } from "react-dom";
 import { fetchSectionsByDept } from "./lib/section-client";
-import prisma from "@/lib/prisma";
-import { Departments } from "@/generated/prisma/enums";
 import Form from "next/form";
-import generate, { downloadAsStudent, downloadAsTeacher } from "./lib/generatet";
+import { downloadAsStudent, downloadAsTeacher } from "./lib/generator";
 import { getAll } from "./lib/teachers-client";
+import RegenerateButton from "@/components/Regenerate-Button";
+import { useSearchParams } from "next/navigation";
 
 export default function Home() {
+
+  const searchParams = useSearchParams();
+  const success = searchParams.get("success");
 
   const [sections, setSections] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -46,49 +48,49 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        {/* Header */}
-        <div className="mb-12 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-3">
-            Class Routine Generator
-          </h1>
-          <p className="text-slate-300 text-lg md:text-xl max-w-2xl mx-auto">
-            Generate and download optimized academic timetables for students and teachers
-          </p>
-        </div>
+    <main className="lg:ml-80 pt-24 min-h-screen brutal-grid">
+      <div className="max-w-7xl mx-auto px-8 pb-20">
+        <header className="relative mb-24 mt-12">
+          <div className="relative z-10">
+            <span
+              className="font-label text-sm font-bold uppercase tracking-[0.4em] text-secondary mb-4 block">System
+              Portal / V2.0</span>
+            {success == "true" ? (
 
-        <div className="grid md:grid-cols-2 gap-8 mb-8">
-          {/* Section Downloads Card */}
-          <div className="bg-gradient-to-br from-slate-700/50 to-slate-800/50 rounded-xl p-8 border border-slate-600 backdrop-blur-sm hover:border-blue-500/50 transition-all duration-300">
-            <div className="flex items-center gap-3 mb-6">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-                className="w-6 h-6 text-blue-400"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M4.26 10.147a60 60 0 0 0-.491 6.347A48.4 48.4 0 0 1 12 20.904a48.4 48.4 0 0 1 8.232-4.41.75.75 0 1 0-.92-1.22A49.373 49.373 0 0 0 12 19.5a49.372 49.372 0 0 0-7.674-3.568.75.75 0 0 0-.919 1.215ZM6.75 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12-8.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
-                />
-              </svg>
-              <h2 className="text-2xl font-bold text-white">Student Schedule</h2>
+              <h1
+                className="text-7xl md:text-9xl font-black font-headline text-green-700 tracking-tighter leading-[0.85] uppercase">
+                Generated<br />
+                <span className="generator-text-success">Succcessfully</span>
+              </h1>
+            ) : (
+              <h1
+                className="text-7xl md:text-9xl font-black font-headline text-primary tracking-tighter leading-[0.85] uppercase">
+                Routine<br />
+                <span className="generator-text">Generator</span>
+              </h1>
+            )}
+            <p className="max-w-xl mt-8 font-body text-xl text-on-surface-variant leading-relaxed">
+              The ultimate scheduling engine for the engineering elite. Precision-mapped routines generated in
+              real-time using optimized departmental algorithms.
+            </p>
+          </div>
+        </header>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 border-t-2 border-primary">
+          <section
+            className="lg:col-span-5 bg-white p-10 border-r-0 lg:border-r border-b-2 lg:border-b-0 border-primary">
+            <div className="flex justify-between items-start mb-12">
+              <h2 className="font-headline text-4xl font-black text-primary leading-none uppercase">
+                Student<br />Schedule</h2>
+              <span className="material-symbols-outlined text-4xl text-secondary">school</span>
             </div>
-            <Form action={downloadAsStudent} className="flex flex-col gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Department
-                </label>
+            <Form action={downloadAsStudent} className="space-y-10">
+              <div className="group">
+                <label
+                  className="block font-label text-xs font-bold uppercase tracking-widest text-primary mb-2">Department</label>
                 <select
-                  onChange={getSections}
                   name="department"
-                  className="w-full px-4 py-2.5 bg-slate-600 border border-slate-500 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all disabled:opacity-50"
-                  disabled={loading}
-                >
+                  onChange={getSections}
+                  className="w-full bg-transparent border-0 border-b-2 border-outline-variant focus:ring-0 focus:border-secondary transition-all font-body text-2xl py-2 appearance-none">
                   <option value="">{loading ? "Loading..." : "Select Department"}</option>
                   {departments.map((dept) => (
                     <option key={dept} value={dept}>
@@ -97,98 +99,103 @@ export default function Home() {
                   ))}
                 </select>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Section
-                </label>
-                <select
-                  name="section"
-                  className="w-full px-4 py-2.5 bg-slate-600 border border-slate-500 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all"
-                >
-                  <option value="">Select Section</option>
-                  {sections.map((code) => (
-                    <option key={code} value={code}>
-                      {code}
-                    </option>
-                  ))}
-                </select>
+              <div className="grid grid-cols-2 gap-10">
+                <div className="group">
+                  <label
+                    className="block font-label text-xs font-bold uppercase tracking-widest text-primary mb-2">Level
+                    / Term</label>
+                  <select
+                    name="term"
+                    className="w-full bg-transparent border-0 border-b-2 border-outline-variant focus:ring-0 focus:border-secondary font-body text-2xl py-2 appearance-none">
+                    <option value="L1_T1">L1 T1</option>
+                    <option value="L1_T2">L1 T2</option>
+                    <option value="L2_T1">L2 T1</option>
+                    <option value="L2_T2">L2 T2</option>
+                    <option value="L3_T1">L3 T1</option>
+                    <option value="L3_T2">L3 T2</option>
+                  </select>
+                </div>
+                <div className="group">
+                  <label
+                    className="block font-label text-xs font-bold uppercase tracking-widest text-primary mb-2">Section</label>
+                  <select
+                    name="section"
+                    className="w-full bg-transparent border-0 border-b-2 border-outline-variant focus:ring-0 focus:border-secondary font-body text-2xl py-2 appearance-none">
+                    <option value="">Select Section</option>
+                    {sections.map((code) => (
+                      <option key={code} value={code}>
+                        {code}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Term
-                </label>
-                <select
-                  name="term"
-                  className="w-full px-4 py-2.5 bg-slate-600 border border-slate-500 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all"
-                >
-                  <option value="">Select Term</option>
-                  <option value="L1_T1">L1 T1</option>
-                  <option value="L1_T2">L1 T2</option>
-                  <option value="L2_T1">L2 T1</option>
-                  <option value="L2_T2">L2 T2</option>
-                  <option value="L3_T1">L3 T1</option>
-                  <option value="L3_T2">L3 T2</option>
-                </select>
-              </div>
-
               <button
-                type="submit"
-                className="mt-2 w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 active:from-blue-700 active:to-blue-800 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-blue-500/50"
-              >
-                Download Schedule
+                className="w-full bg-primary text-white py-6 font-label font-bold uppercase tracking-[0.2em] group relative overflow-hidden flex items-center justify-center gap-4 hover:bg-primary-container transition-all">
+                <span>Download Full Schedule</span>
+                <span className="material-symbols-outlined text-white">download</span>
               </button>
             </Form>
-          </div>
-
-          {/* Teacher Schedule Card */}
-          <div className="bg-gradient-to-br from-slate-700/50 to-slate-800/50 rounded-xl p-8 border border-slate-600 backdrop-blur-sm hover:border-purple-500/50 transition-all duration-300 max-w-2xl">
-            <div className="flex items-center gap-3 mb-6">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-                className="w-6 h-6 text-purple-400"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
-                />
-              </svg>
-              <h2 className="text-2xl font-bold text-white">Teacher Schedule</h2>
-            </div>
-            <Form action={downloadAsTeacher} className="flex flex-col gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Select Teacher
-                </label>
-                <select
-                  name="teacherId"
-                  className="w-full px-4 py-2.5 bg-slate-600 border border-slate-500 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/50 transition-all"
-                >
-                  <option value="">Select Teacher</option>
-                  {teachers.map((teacher) => (
-                    <option key={teacher.id} value={teacher.id}>
-                      {teacher.name}
-                    </option>
-                  ))}
-                </select>
+          </section>
+          <div className="lg:col-span-7 grid grid-cols-1">
+            <section className="bg-surface-container-low p-10 border-b-2 border-primary">
+              <div className="flex justify-between items-start mb-12">
+                <div>
+                  <h2 className="font-headline text-4xl font-black text-primary leading-none uppercase">
+                    Faculty<br />Master-Log</h2>
+                  <p className="font-body text-lg text-on-surface-variant mt-2 italic italic">Personalized
+                    schedules for academic mentors.</p>
+                </div>
+                <span className="material-symbols-outlined text-4xl text-secondary">co_present</span>
               </div>
-
-              <button
-                type="submit"
-                className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 active:from-purple-700 active:to-purple-800 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-purple-500/50"
-              >
-                Download Schedule
-              </button>
-            </Form>
+              <Form action={downloadAsTeacher} className="space-y-10">
+                <div className="group">
+                  <label
+                    className="block font-label text-xs font-bold uppercase tracking-widest text-primary mb-2">Teachers</label>
+                  <select
+                    name="teacherId"
+                    className="w-full bg-transparent border-0 border-b-2 border-outline-variant focus:ring-0 focus:border-secondary transition-all font-body text-2xl py-2 appearance-none">
+                    <option value="">Select</option>
+                    {teachers.map((teacher) => (
+                      <option key={teacher.id} value={teacher.id}>
+                        {teacher.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <button
+                  className="w-full bg-primary text-white py-6 font-label font-bold uppercase tracking-[0.2em] group relative overflow-hidden flex items-center justify-center gap-4 hover:bg-primary-container transition-all">
+                  <span>Download Full Schedule</span>
+                  <span className="material-symbols-outlined text-white">download</span>
+                </button>
+              </Form>
+            </section>
           </div>
         </div>
+
+        <RegenerateButton />
+
+        <footer className="mt-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-end">
+          <div className="lg:col-span-8">
+            <blockquote className="font-body text-4xl lg:text-5xl italic text-on-surface/40 leading-tight">
+              "The architecture of time is the <span className="text-primary not-italic font-black">foundation
+                of
+                progress</span>."
+            </blockquote>
+          </div>
+          <div className="lg:col-span-4 flex flex-col items-end">
+            <div className="w-24 h-24 bg-secondary-container mb-4 overflow-hidden relative">
+              <img className="w-full h-full object-cover grayscale opacity-50"
+                data-alt="architectural detail of a brutalist concrete university building with strong geometric shadows"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDl_8REemX9enwLpMy0XykY-rJVf9FnGjDWBOSvNS0LZRSes4P8jpSvoFsduza-TRuufBY0_Rp-rY6VNX8SAJ7DOoxeLZ2CxkH7754Rjg_ziWwwiSPjGPunS1-KHPfgl1qVhWxW9jWP7q6Z9eGx8LJV6vZquEcdMtDUdMXSV934OTCJ6GyxATrZsoX0NrUHZqMIazc-gkRJRd4sVkaJH-M1ZNWUINZP7YbpQsKwIi6QeAQ1ELVq1yYsdwtHqT8UjIR2DM_O2t_MtPTB" />
+              <div className="absolute inset-0 bg-primary/20"></div>
+            </div>
+            <span className="font-label text-[10px] font-bold uppercase tracking-[0.5em] text-stone-400">BUET
+              REBEL
+              TECH // 2024</span>
+          </div>
+        </footer>
       </div>
-    </div>
+    </main>
   );
 }
