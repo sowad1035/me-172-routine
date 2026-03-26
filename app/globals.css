@@ -67,3 +67,9 @@ html {
   -webkit-text-stroke: 2px #004d40;
   color: transparent;
 }
+
+
+.generator-text-name {
+  -webkit-text-stroke: 1px #7a0024;
+  color: transparent;
+}

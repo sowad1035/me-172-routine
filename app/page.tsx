@@ -176,6 +176,48 @@ export default function Home() {
         <RegenerateButton />
 
         <footer className="mt-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-end">
+
+          <div className="col-span-1 lg:col-span-12">
+            <h2 className="text-4xl mb-10 font-headline font-black text-on-surface/70">ME-172 Section-C2 Group-3</h2>
+            <h1
+              className="pb-4 text-3xl md:text-5xl font-black font-headline text-primary tracking-tighter leading-[0.85] uppercase">
+              <span className="mr-4 generator-text-name">Syed Mohammad</span>
+              Sowad
+            </h1>
+            <h1
+              className="pb-4 text-3xl md:text-5xl font-black font-headline text-primary tracking-tighter leading-[0.85] uppercase">
+              NIJUM
+              <span className="ml-4 generator-text-name"> CHANDRA DEY</span>
+            </h1>
+            <h1
+              className="pb-4 text-3xl md:text-5xl font-black font-headline text-primary tracking-tighter leading-[0.85] uppercase">
+              ASIF
+              <span className="ml-4 generator-text-name">IBNE MAHBUB</span>
+            </h1>
+            <h1
+              className="pb-4 text-3xl md:text-5xl font-black font-headline text-primary tracking-tighter leading-[0.85] uppercase">
+              <span className="mr-4 generator-text-name">MD. ROKNUJJAMAN</span>
+
+              SAFEIN
+            </h1>
+
+            <h1
+              className="pb-4 text-3xl md:text-5xl font-black font-headline text-primary tracking-tighter leading-[0.85] uppercase">
+              <span className="mr-4 generator-text-name">Mahrus</span>
+              Arif
+            </h1>
+
+            <h1
+              className="pb-4 text-3xl md:text-5xl font-black font-headline text-primary tracking-tighter leading-[0.85] uppercase">
+              <span className="mr-4 generator-text-name">MD.</span>
+              MUHTADI
+              <span className="ml-4 generator-text-name">
+                JUNAYED
+              </span>
+            </h1>
+
+          </div>
+
           <div className="lg:col-span-8">
             <blockquote className="font-body text-4xl lg:text-5xl italic text-on-surface/40 leading-tight">
               "The architecture of time is the <span className="text-primary not-italic font-black">foundation
@@ -192,8 +234,9 @@ export default function Home() {
             </div>
             <span className="font-label text-[10px] font-bold uppercase tracking-[0.5em] text-stone-400">BUET
               REBEL
-              TECH // 2024</span>
+              TECH // 2026</span>
           </div>
+
         </footer>
       </div>
     </main>

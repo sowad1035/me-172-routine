@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 
-<html className="light" lang="en">
+<html class="light" lang="en">
 
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>BUET Academic Rebel | Routine Generator</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link
-        href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;900&amp;family=Space+Grotesk:wght@300;500;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,700;1,6..72,400&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;900&amp;family=Space+Grotesk:wght@300;500;700&amp;family=Newsreader:ital,wght@0,400;0,600;1,400&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
     <script id="tailwind-config">
         tailwind.config = {
-            darkMode: "className",
+            darkMode: "class",
             theme: {
                 extend: {
                     colors: {
@@ -82,255 +84,368 @@
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
 
-        .brutal-grid {
-            background-image: linear-gradient(#e2bec0 1px, transparent 1px), linear-gradient(90deg, #e2bec0 1px, transparent 1px);
-            background-size: 100px 100px;
-        }
-
-        .text-stroke {
-            -webkit-text-stroke: 1px #7a0024;
-            color: transparent;
+        body {
+            background-color: #f9f9f9;
+            color: #1a1c1c;
         }
     </style>
 </head>
 
-<body className="bg-surface font-body text-on-surface">
+<body class="font-body selection:bg-secondary-container selection:text-on-secondary-container">
     <!-- TopNavBar -->
     <nav
-        className="fixed top-0 z-50 w-full px-8 h-20 flex justify-between items-center bg-white/80 dark:bg-stone-950/80 backdrop-blur-xl">
-        <div className="flex items-center gap-4">
-            <span className="text-2xl font-black text-[#a50034] tracking-tighter font-['Epilogue'] uppercase">BUET
-                Academic
+        class="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-xl flex justify-between items-center px-8 h-20">
+        <div class="flex items-center gap-4">
+            <span class="text-2xl font-black text-[#a50034] tracking-tighter font-headline uppercase">BUET Academic
                 Rebel</span>
         </div>
-        <div className="flex items-center gap-6">
-            <button
-                className="text-stone-500 hover:text-[#feb700] transition-colors duration-200 scale-95 active:transition-transform">
-                <span className="material-symbols-outlined">notifications</span>
+        <div class="flex items-center gap-6">
+            <button class="text-stone-500 hover:text-[#feb700] transition-colors duration-200">
+                <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
             </button>
-            <button
-                className="text-stone-500 hover:text-[#feb700] transition-colors duration-200 scale-95 active:transition-transform">
-                <span className="material-symbols-outlined">settings</span>
+            <button class="text-stone-500 hover:text-[#feb700] transition-colors duration-200">
+                <span class="material-symbols-outlined" data-icon="settings">settings</span>
             </button>
-            <div className="w-10 h-10 bg-primary-container overflow-hidden">
-                <img className="w-full h-full object-cover grayscale contrast-125"
-                    data-alt="close-up portrait of a male university professor in a sharp suit with intellectual expression"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCah5-qTH29icw4DC2LLfEcrqtKoJEcBIiCmGtF-l4lKdhSP4YHaPwPM-IWSsXbJZ6-SCmWmlsqritYkhGUCSttqSp7ew8O7TL5h9NIf2ihwv0MgCLdxPUIvXXYvhzqFBMnZJH9NW9eBUmBVg_cY2S9kFIO67yRorcfv7cLvLKojGkw6c0xPUw-w5BjH7If0qsvfk1fSQTBrb3c5HJMu5JvxsXPwJeWw71TaU7ZPT7YKDhpsxQTqQLjRBLcLlzNyJv_VjyDKkfGekEi" />
+            <div class="h-10 w-10 bg-surface-container-highest flex items-center justify-center overflow-hidden">
+                <img alt="User Profile Avatar" class="object-cover w-full h-full"
+                    data-alt="Professional headshot of a senior academic administrator in a suit with a neutral background"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUkVemz9O45kprIRKXGQWc4o6nQnjlTWC-VdEKJ0T-BFX9XGkjJPxWYuFQbrFqWg0hBuUyYNQDfCG-JezNDhnJ6hllmvi2dnfENNmldprPSiMQRwvx4pcQCd4BPSzKgnhxOXsL59P1RYQJ9-vrdwQ_rgbox6kQumHepKmFt-zxM3jLx146aY50UmukBLgBQeDgXwEU_7G922eTp1qObZtVOUzvP4ALr8Fj0MBn1DYfRQWszgK_JdabjFzVOCgE7edggT_y_-XMvy4x" />
             </div>
         </div>
     </nav>
-    <!-- SideNavBar (Hidden on small screens) -->
-    <aside
-        className="fixed left-0 top-0 h-full hidden md:flex flex-col p-6 z-40 w-64 bg-[#f9f9f9] dark:bg-stone-950 border-r-0">
-        <div className="text-xl font-black text-[#a50034] tracking-tighter mb-12 mt-20 font-['Epilogue']">
-            BUET<br /><span className="text-stone-400 text-xs tracking-[0.2em] font-label font-bold">ACADEMIC
-                REBEL</span>
+    <!-- SideNavBar -->
+    <aside class="fixed left-0 top-0 h-full w-64 bg-[#f9f9f9] flex flex-col p-6 z-40 pt-24">
+        <div class="mb-10">
+            <h2 class="text-xl font-black text-[#a50034] tracking-tighter font-headline uppercase">BUET</h2>
+            <p class="font-label text-xs font-bold uppercase tracking-widest text-stone-500">Academic Rebel</p>
         </div>
-        <div className="flex flex-col gap-2 flex-grow">
-            <a className="flex items-center gap-3 p-3 font-['Space_Grotesk'] text-xs font-bold uppercase tracking-widest text-stone-600 hover:translate-x-1 transition-transform duration-200"
+        <nav class="flex flex-col gap-2 flex-grow">
+            <a class="flex items-center gap-3 px-4 py-3 font-label text-xs font-bold uppercase tracking-widest text-stone-600 hover:translate-x-1 transition-transform duration-200"
                 href="#">
-                <span className="material-symbols-outlined">dashboard</span> Dashboard
+                <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                <span>Dashboard</span>
             </a>
-            <a className="flex items-center gap-3 p-3 font-['Space_Grotesk'] text-xs font-bold uppercase tracking-widest bg-[#a50034] text-white"
+            <a class="flex items-center gap-3 px-4 py-3 font-label text-xs font-bold uppercase tracking-widest text-stone-600 hover:translate-x-1 transition-transform duration-200"
                 href="#">
-                <span className="material-symbols-outlined">calendar_today</span> Routine
+                <span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+                <span>Routine</span>
             </a>
-            <a className="flex items-center gap-3 p-3 font-['Space_Grotesk'] text-xs font-bold uppercase tracking-widest text-stone-600 hover:translate-x-1 transition-transform duration-200"
+            <a class="flex items-center gap-3 px-4 py-3 font-label text-xs font-bold uppercase tracking-widest bg-[#a50034] text-white"
                 href="#">
-                <span className="material-symbols-outlined">groups</span> Faculty
+                <span class="material-symbols-outlined" data-icon="groups">groups</span>
+                <span>Faculty</span>
             </a>
-            <a className="flex items-center gap-3 p-3 font-['Space_Grotesk'] text-xs font-bold uppercase tracking-widest text-stone-600 hover:translate-x-1 transition-transform duration-200"
+            <a class="flex items-center gap-3 px-4 py-3 font-label text-xs font-bold uppercase tracking-widest text-stone-600 hover:translate-x-1 transition-transform duration-200"
                 href="#">
-                <span className="material-symbols-outlined">library_books</span> Courses
+                <span class="material-symbols-outlined" data-icon="library_books">library_books</span>
+                <span>Courses</span>
             </a>
-        </div>
-        <div className="mt-auto border-t border-outline-variant pt-6">
-            <a className="flex items-center gap-3 p-3 font-['Space_Grotesk'] text-xs font-bold uppercase tracking-widest text-stone-600"
+        </nav>
+        <div class="mt-auto flex flex-col gap-2">
+            <button
+                class="bg-[#feb700] text-black font-label text-xs font-bold uppercase tracking-widest py-4 mb-6 hover:opacity-90 active:scale-95 transition-all">
+                New Entry
+            </button>
+            <a class="flex items-center gap-3 px-4 py-2 font-label text-xs font-bold uppercase tracking-widest text-stone-500 hover:text-primary transition-colors"
                 href="#">
-                <span className="material-symbols-outlined">help</span> Support
+                <span class="material-symbols-outlined" data-icon="help">help</span>
+                <span>Support</span>
             </a>
-            <a className="flex items-center gap-3 p-3 font-['Space_Grotesk'] text-xs font-bold uppercase tracking-widest text-stone-600"
+            <a class="flex items-center gap-3 px-4 py-2 font-label text-xs font-bold uppercase tracking-widest text-stone-500 hover:text-primary transition-colors"
                 href="#">
-                <span className="material-symbols-outlined">logout</span> Logout
+                <span class="material-symbols-outlined" data-icon="logout">logout</span>
+                <span>Logout</span>
             </a>
         </div>
     </aside>
     <!-- Main Content Canvas -->
-    <main className="md:ml-64 pt-24 min-h-screen brutal-grid">
-        <div className="max-w-7xl mx-auto px-8 pb-20">
-            <!-- Hero Header Section -->
-            <header className="relative mb-24 mt-12">
-                <div
-                    className="absolute -top-10 -left-4 text-[12rem] font-black text-primary/5 select-none font-headline tracking-tighter leading-none">
-                    01
-                </div>
-                <div className="relative z-10">
-                    <span
-                        className="font-label text-sm font-bold uppercase tracking-[0.4em] text-secondary mb-4 block">System
-                        Portal / V4.2</span>
+    <main class="pl-64 pt-20 min-h-screen bg-surface">
+        <div class="flex flex-col lg:flex-row min-h-[calc(100vh-5rem)]">
+            <!-- Center Canvas: Teachers List -->
+            <section class="flex-grow p-10 lg:p-16">
+                <header class="mb-16">
                     <h1
-                        className="text-7xl md:text-9xl font-black font-headline text-primary tracking-tighter leading-[0.85] uppercase">
-                        Routine<br />
-                        <span className="text-stroke">Generator</span>
+                        class="font-headline text-8xl font-black uppercase tracking-tighter text-primary leading-none mb-4">
+                        Teachers
                     </h1>
-                    <p className="max-w-xl mt-8 font-body text-xl text-on-surface-variant leading-relaxed">
-                        The ultimate scheduling engine for the engineering elite. Precision-mapped routines generated in
-                        real-time using optimized departmental algorithms.
-                    </p>
-                </div>
-            </header>
-            <!-- Layout Grid -->
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 border-t-2 border-primary">
-                <!-- Left Column: Student Schedule -->
-                <section
-                    className="lg:col-span-5 bg-white p-10 border-r-0 lg:border-r border-b-2 lg:border-b-0 border-primary">
-                    <div className="flex justify-between items-start mb-12">
-                        <h2 className="font-headline text-4xl font-black text-primary leading-none uppercase">
-                            Student<br />Schedule</h2>
-                        <span className="material-symbols-outlined text-4xl text-secondary">school</span>
+                    <div class="flex items-baseline gap-4">
+                        <span class="font-label text-2xl font-bold text-secondary">84</span>
+                        <span class="font-body italic text-xl text-stone-500">total faculty members registered</span>
                     </div>
-                    <form className="space-y-10">
-                        <div className="group">
-                            <label
-                                className="block font-label text-xs font-bold uppercase tracking-widest text-primary mb-2">Department</label>
-                            <select
-                                className="w-full bg-transparent border-0 border-b-2 border-outline-variant focus:ring-0 focus:border-secondary transition-all font-body text-2xl py-2 appearance-none">
-                                <option>CSE (Computer Science)</option>
-                                <option>EEE (Electrical &amp; Electronics)</option>
-                                <option>ME (Mechanical)</option>
-                                <option>CE (Civil Engineering)</option>
-                            </select>
+                </header>
+                <div class="space-y-12">
+                    <!-- Table Header -->
+                    <div
+                        class="grid grid-cols-12 gap-4 pb-4 border-b-2 border-outline-variant font-label text-[10px] uppercase tracking-[0.2em] font-bold text-stone-400">
+                        <div class="col-span-1">Rank</div>
+                        <div class="col-span-4">Faculty Member</div>
+                        <div class="col-span-3">Designation</div>
+                        <div class="col-span-3">Workload</div>
+                        <div class="col-span-1 text-right">Actions</div>
+                    </div>
+                    <!-- Faculty Row 1 -->
+                    <div class="grid grid-cols-12 gap-4 items-center group">
+                        <div class="col-span-1">
+                            <div
+                                class="w-10 h-10 flex items-center justify-center border-2 border-primary text-primary font-label font-bold text-sm">
+                                01</div>
                         </div>
-                        <div className="grid grid-cols-2 gap-10">
-                            <div className="group">
-                                <label
-                                    className="block font-label text-xs font-bold uppercase tracking-widest text-primary mb-2">Level
-                                    / Term</label>
-                                <select
-                                    className="w-full bg-transparent border-0 border-b-2 border-outline-variant focus:ring-0 focus:border-secondary font-body text-2xl py-2 appearance-none">
-                                    <option>L4 / T1</option>
-                                    <option>L3 / T2</option>
-                                    <option>L2 / T1</option>
-                                </select>
+                        <div class="col-span-4 flex items-center gap-4">
+                            <div class="w-12 h-12 bg-surface-container-high overflow-hidden">
+                                <img alt="Faculty Portrait"
+                                    class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                                    data-alt="Close up portrait of a middle-aged female professor with glasses in an academic setting with soft library lighting"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDa3tCQzu1Kk5mtGnzYAxKXERXFTpUABNKl57810sJ38couEKVocn9jidWZKk182cRZbzbi8el9-LkSkk2m6XLgPjzI-yPGvBmq2HWi1eOAay9UXo2J-ztKwh8sjWz45yu8uxQcCU2CZjsLNTo7C9kAHK2tKD2kFDnXMgtSSXZ9rJXeQaGtoEb2WXD6j82Vdq8Q5Xd_ASA98V6_AKXqyrIp8E_qZSs1UENo14gj2J0c5JRwcMewTrSzNOwacxAVO6mpDfbYphpjX2n" />
                             </div>
-                            <div className="group">
-                                <label
-                                    className="block font-label text-xs font-bold uppercase tracking-widest text-primary mb-2">Section</label>
-                                <select
-                                    className="w-full bg-transparent border-0 border-b-2 border-outline-variant focus:ring-0 focus:border-secondary font-body text-2xl py-2 appearance-none">
-                                    <option>A</option>
-                                    <option>B</option>
-                                    <option>C</option>
-                                </select>
-                            </div>
-                        </div>
-                        <button
-                            className="w-full bg-primary text-white py-6 font-label font-bold uppercase tracking-[0.2em] group relative overflow-hidden flex items-center justify-center gap-4 hover:bg-primary-container transition-all">
-                            <span>Download Full Schedule</span>
-                            <span className="material-symbols-outlined text-secondary">download</span>
-                        </button>
-                    </form>
-                </section>
-                <!-- Right Column: Teacher & Status -->
-                <div className="lg:col-span-7 grid grid-cols-1">
-                    <!-- Teacher Schedule Card -->
-                    <section className="bg-surface-container-low p-10 border-b-2 border-primary">
-                        <div className="flex justify-between items-start mb-12">
                             <div>
-                                <h2 className="font-headline text-4xl font-black text-primary leading-none uppercase">
-                                    Faculty<br />Master-Log</h2>
-                                <p className="font-body text-lg text-on-surface-variant mt-2 italic italic">Personalized
-                                    schedules for academic mentors.</p>
+                                <h3 class="font-headline font-bold text-lg text-on-surface leading-tight">Dr. Sarah
+                                    Rahman</h3>
+                                <p class="font-label text-[10px] text-stone-400 uppercase tracking-widest">ID:
+                                    BU-CSE-001</p>
                             </div>
-                            <span className="material-symbols-outlined text-4xl text-secondary">co_present</span>
                         </div>
-                        <div className="relative group mb-8">
+                        <div class="col-span-3">
                             <span
-                                className="absolute left-0 top-1/2 -translate-y-1/2 material-symbols-outlined text-primary">search</span>
-                            <input
-                                className="w-full bg-transparent border-0 border-b-2 border-outline focus:ring-0 focus:border-secondary font-label font-bold pl-10 py-4 placeholder:text-stone-400"
-                                placeholder="SEARCH FACULTY NAME..." type="text" />
+                                class="bg-primary text-white font-label text-[10px] font-bold uppercase px-3 py-1 tracking-widest">Senior
+                                Professor</span>
                         </div>
-                        <div className="flex flex-wrap gap-4 mb-10">
-                            <button
-                                className="px-6 py-3 bg-secondary-container text-on-secondary-container font-label text-xs font-bold uppercase tracking-widest flex items-center gap-2">
-                                <span className="material-symbols-outlined text-sm">download</span> Prof. Dr. Kaykobad
-                            </button>
-                            <button
-                                className="px-6 py-3 border border-outline text-on-surface font-label text-xs font-bold uppercase tracking-widest hover:border-primary transition-colors">
-                                Dr. Md. Mostofa Akbar
-                            </button>
-                            <button
-                                className="px-6 py-3 border border-outline text-on-surface font-label text-xs font-bold uppercase tracking-widest">
-                                View Full Directory
-                            </button>
-                        </div>
-                    </section>
-                    <!-- System Status Bento -->
-                    <section className="grid grid-cols-1 md:grid-cols-2 gap-0">
-                        <div className="bg-primary p-10 flex flex-col justify-between min-h-[300px]">
-                            <span className="material-symbols-outlined text-secondary text-6xl"
-                                style="font-variation-settings: 'FILL' 1;">bolt</span>
-                            <div>
-                                <h3
-                                    className="font-headline text-3xl font-black text-white uppercase leading-none mb-2">
-                                    Algorithm<br />Optimized</h3>
-                                <p
-                                    className="font-label text-[10px] uppercase tracking-[0.2em] text-on-primary-container">
-                                    Quantum Shuffle V2.0 Active</p>
-                            </div>
-                        </div>
-                        <div
-                            className="bg-white p-10 border-l-0 md:border-l border-primary flex flex-col justify-between">
-                            <div className="flex justify-between items-start">
-                                <span
-                                    className="font-label text-xs font-bold text-primary uppercase tracking-widest">Global
-                                    Status</span>
-                                <div className="flex gap-1">
-                                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                    <div className="w-2 h-2 bg-green-500/20 rounded-full"></div>
+                        <div class="col-span-3">
+                            <div class="flex flex-col gap-1">
+                                <div
+                                    class="flex justify-between font-label text-[10px] font-bold uppercase text-stone-500">
+                                    <span>92% Density</span>
+                                    <span>22 hrs/wk</span>
+                                </div>
+                                <div class="w-full bg-surface-container-highest h-1">
+                                    <div class="bg-primary h-full" style="width: 92%;"></div>
                                 </div>
                             </div>
-                            <div className="mt-8">
-                                <div className="text-5xl font-black font-headline text-primary">99.9<span
-                                        className="text-xl text-secondary">%</span></div>
-                                <div className="font-body text-on-surface-variant leading-tight">Conflict-free
-                                    distribution
-                                    across all departments.</div>
+                        </div>
+                        <div class="col-span-1 text-right">
+                            <button class="text-stone-300 hover:text-primary transition-colors">
+                                <span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Faculty Row 2 -->
+                    <div class="grid grid-cols-12 gap-4 items-center group">
+                        <div class="col-span-1">
+                            <div
+                                class="w-10 h-10 flex items-center justify-center border-2 border-stone-300 text-stone-400 font-label font-bold text-sm">
+                                02</div>
+                        </div>
+                        <div class="col-span-4 flex items-center gap-4">
+                            <div class="w-12 h-12 bg-surface-container-high overflow-hidden">
+                                <img alt="Faculty Portrait"
+                                    class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                                    data-alt="Professional headshot of a male professor in a laboratory setting with subtle blue backlighting"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBP99gEwhg1dRZqH2cbGz5YWvNftF5xHfjmA1SnU2EccqNG5d3X1W5WbfaasrWpfK6qvE1wvd7pR7pEgThYDBBV7sMquyRidkTeNHkbOnnIcoKFDRHfuj5FncaVfEYaNZXhFzKq4C7EbGc--mJE-LwC_U54JrWhGPmi0nihTS6dCQB8aD8_2KLIbRNHzBJOPhZWbc6FCWEn8yPLTQHR00ZY7VdBNRz8HItSAanCvPHenne_I4ipiCzhQK6guMr3ISZMFKF7D6KOoSXZ" />
+                            </div>
+                            <div>
+                                <h3 class="font-headline font-bold text-lg text-on-surface leading-tight">Prof. Ahmad
+                                    Ullah</h3>
+                                <p class="font-label text-[10px] text-stone-400 uppercase tracking-widest">ID:
+                                    BU-EEE-014</p>
                             </div>
                         </div>
-                    </section>
-                </div>
-            </div>
-            <!-- Editorial Quote / Footer Area -->
-            <footer className="mt-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-end">
-                <div className="lg:col-span-8">
-                    <blockquote className="font-body text-4xl lg:text-5xl italic text-on-surface/40 leading-tight">
-                        "The architecture of time is the <span className="text-primary not-italic font-black">foundation
-                            of
-                            progress</span>."
-                    </blockquote>
-                </div>
-                <div className="lg:col-span-4 flex flex-col items-end">
-                    <div className="w-24 h-24 bg-secondary-container mb-4 overflow-hidden relative">
-                        <img className="w-full h-full object-cover grayscale opacity-50"
-                            data-alt="architectural detail of a brutalist concrete university building with strong geometric shadows"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDl_8REemX9enwLpMy0XykY-rJVf9FnGjDWBOSvNS0LZRSes4P8jpSvoFsduza-TRuufBY0_Rp-rY6VNX8SAJ7DOoxeLZ2CxkH7754Rjg_ziWwwiSPjGPunS1-KHPfgl1qVhWxW9jWP7q6Z9eGx8LJV6vZquEcdMtDUdMXSV934OTCJ6GyxATrZsoX0NrUHZqMIazc-gkRJRd4sVkaJH-M1ZNWUINZP7YbpQsKwIi6QeAQ1ELVq1yYsdwtHqT8UjIR2DM_O2t_MtPTB" />
-                        <div className="absolute inset-0 bg-primary/20"></div>
+                        <div class="col-span-3">
+                            <span
+                                class="bg-stone-200 text-stone-600 font-label text-[10px] font-bold uppercase px-3 py-1 tracking-widest">Associate
+                                Prof</span>
+                        </div>
+                        <div class="col-span-3">
+                            <div class="flex flex-col gap-1">
+                                <div
+                                    class="flex justify-between font-label text-[10px] font-bold uppercase text-stone-500">
+                                    <span>75% Density</span>
+                                    <span>18 hrs/wk</span>
+                                </div>
+                                <div class="w-full bg-surface-container-highest h-1">
+                                    <div class="bg-secondary h-full" style="width: 75%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-span-1 text-right">
+                            <button class="text-stone-300 hover:text-primary transition-colors">
+                                <span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+                            </button>
+                        </div>
                     </div>
-                    <span className="font-label text-[10px] font-bold uppercase tracking-[0.5em] text-stone-400">BUET
-                        REBEL
-                        TECH // 2024</span>
+                    <!-- Faculty Row 3 -->
+                    <div class="grid grid-cols-12 gap-4 items-center group">
+                        <div class="col-span-1">
+                            <div
+                                class="w-10 h-10 flex items-center justify-center border-2 border-stone-300 text-stone-400 font-label font-bold text-sm">
+                                03</div>
+                        </div>
+                        <div class="col-span-4 flex items-center gap-4">
+                            <div class="w-12 h-12 bg-surface-container-high overflow-hidden">
+                                <img alt="Faculty Portrait"
+                                    class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                                    data-alt="Portrait of a young female academic in a modern classroom setting with bright natural light"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAehP1iqtWRNbzj_qs4YrT6qUebtfPWWVeUHiPtF99mEM6-bTGwxH3DG9P1xq_2KsmvDIi_H5q9vFO7jzP0tlnC-lgB5bpBFGuN0wCIo8de83NCyyu9HAeAB_2vYIR1FpbZK2AQEwL3V-Wxj43m0a3xulppd9QDlW39aqRrG8eAgckS5JO2vJjMMdvZ8z1caHY0oVibmK3c48eGsJA70R1-Ift0Dt5pA216sG8d1IGZhjKZnbDBI9YIgcTVYBMY_AZwcSxMhxNz4eo0" />
+                            </div>
+                            <div>
+                                <h3 class="font-headline font-bold text-lg text-on-surface leading-tight">Dr. Farhana
+                                    Yasmin</h3>
+                                <p class="font-label text-[10px] text-stone-400 uppercase tracking-widest">ID:
+                                    BU-ARC-009</p>
+                            </div>
+                        </div>
+                        <div class="col-span-3">
+                            <span
+                                class="bg-stone-200 text-stone-600 font-label text-[10px] font-bold uppercase px-3 py-1 tracking-widest">Assistant
+                                Prof</span>
+                        </div>
+                        <div class="col-span-3">
+                            <div class="flex flex-col gap-1">
+                                <div
+                                    class="flex justify-between font-label text-[10px] font-bold uppercase text-stone-500">
+                                    <span>40% Density</span>
+                                    <span>10 hrs/wk</span>
+                                </div>
+                                <div class="w-full bg-surface-container-highest h-1">
+                                    <div class="bg-stone-300 h-full" style="width: 40%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-span-1 text-right">
+                            <button class="text-stone-300 hover:text-primary transition-colors">
+                                <span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Faculty Row 4 -->
+                    <div class="grid grid-cols-12 gap-4 items-center group">
+                        <div class="col-span-1">
+                            <div
+                                class="w-10 h-10 flex items-center justify-center border-2 border-stone-300 text-stone-400 font-label font-bold text-sm">
+                                04</div>
+                        </div>
+                        <div class="col-span-4 flex items-center gap-4">
+                            <div class="w-12 h-12 bg-surface-container-high overflow-hidden">
+                                <img alt="Faculty Portrait"
+                                    class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                                    data-alt="Smiling male faculty member standing in front of an architectural model with soft overhead studio lighting"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCP9k7UlaTlFW0gAlgKK6o-YdF5pM0pGeGH3TdVeHpZmymv25vOVWuuU8UGvp-IE1BRDP9llvRRQda8wASQbJa6twORCXLflm-PqrsiNivWSshJl1VrrZl3zWbZa601f8dpBJxgqqXyb8zG6tE04zHA8HR55DMM3rwHclvVe9ffxc-LljbiyU68dTrOKU_AaBe-J8Z6coY0bSvOGP5hOIPkVT8yEDogsYhsrwqehjeIABkOSF4b0W1a9_xnAesrYEQP5U91FF7mBCJM" />
+                            </div>
+                            <div>
+                                <h3 class="font-headline font-bold text-lg text-on-surface leading-tight">Lec. Tanvir
+                                    Hasan</h3>
+                                <p class="font-label text-[10px] text-stone-400 uppercase tracking-widest">ID: BU-ME-022
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-span-3">
+                            <span
+                                class="bg-secondary-container text-on-secondary-container font-label text-[10px] font-bold uppercase px-3 py-1 tracking-widest">Lecturer</span>
+                        </div>
+                        <div class="col-span-3">
+                            <div class="flex flex-col gap-1">
+                                <div
+                                    class="flex justify-between font-label text-[10px] font-bold uppercase text-stone-500">
+                                    <span>88% Density</span>
+                                    <span>20 hrs/wk</span>
+                                </div>
+                                <div class="w-full bg-surface-container-highest h-1">
+                                    <div class="bg-secondary h-full" style="width: 88%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-span-1 text-right">
+                            <button class="text-stone-300 hover:text-primary transition-colors">
+                                <span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </footer>
+                <!-- Floating CTA -->
+                <div class="mt-20">
+                    <button
+                        class="bg-primary text-white font-label font-bold uppercase tracking-[0.2em] px-12 py-6 flex items-center gap-4 hover:bg-[#a50034] transition-all transform active:scale-95">
+                        <span class="material-symbols-outlined" data-icon="add">add</span>
+                        <span>Add Teacher</span>
+                    </button>
+                </div>
+            </section>
+            <!-- Sidebar: Capacity -->
+            <aside
+                class="w-full lg:w-96 bg-surface-container-low p-10 lg:p-16 flex flex-col gap-16 relative overflow-hidden">
+                <!-- Watermark Background -->
+                <div
+                    class="absolute -bottom-10 -right-10 font-headline text-[15rem] font-black text-white/50 pointer-events-none leading-none select-none">
+                    88
+                </div>
+                <div>
+                    <h2 class="font-label text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-12">
+                        Department Capacity</h2>
+                    <div class="space-y-16">
+                        <div>
+                            <p
+                                class="font-headline text-6xl font-black text-on-surface tracking-tighter leading-none mb-2">
+                                1,420</p>
+                            <p class="font-body italic text-stone-500">total instruction hours allocated for Semester
+                                Fall '24</p>
+                        </div>
+                        <div>
+                            <div class="flex items-baseline gap-2 mb-2">
+                                <p
+                                    class="font-headline text-6xl font-black text-secondary tracking-tighter leading-none">
+                                    88%</p>
+                                <span class="font-label text-xs font-bold uppercase text-stone-400">Peak</span>
+                            </div>
+                            <p class="font-body italic text-stone-500">average workload density across all engineering
+                                departments</p>
+                        </div>
+                        <div class="space-y-6">
+                            <h3 class="font-label text-[10px] font-bold uppercase tracking-widest text-stone-400">
+                                Distribution</h3>
+                            <div class="flex h-12 w-full">
+                                <div class="bg-primary h-full" style="width: 45%;" title="Core Faculty"></div>
+                                <div class="bg-secondary h-full" style="width: 30%;" title="Guest Lecturers"></div>
+                                <div class="bg-stone-300 h-full" style="width: 15%;" title="Teaching Assistants"></div>
+                                <div class="bg-stone-800 h-full" style="width: 10%;" title="Visiting Professors"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3 h-3 bg-primary"></span>
+                                    <span class="font-label text-[10px] font-bold uppercase text-stone-500">Core
+                                        (45%)</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3 h-3 bg-secondary"></span>
+                                    <span class="font-label text-[10px] font-bold uppercase text-stone-500">Guest
+                                        (30%)</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3 h-3 bg-stone-300"></span>
+                                    <span class="font-label text-[10px] font-bold uppercase text-stone-500">TA
+                                        (15%)</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3 h-3 bg-stone-800"></span>
+                                    <span class="font-label text-[10px] font-bold uppercase text-stone-500">Visit
+                                        (10%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-auto pt-12">
+                    <div class="p-8 bg-primary-container text-white">
+                        <h4 class="font-headline font-bold text-xl mb-4 leading-tight">Capacity Alert: Mechanical Dept.
+                            reaching 94% limit.</h4>
+                        <p class="font-body text-sm mb-6 opacity-80">Consider redistributing course loads for next term
+                            to prevent burnout.</p>
+                        <button
+                            class="font-label text-[10px] font-bold uppercase tracking-widest border-b-2 border-white/40 pb-1 hover:border-white transition-all">
+                            Review Allocation
+                        </button>
+                    </div>
+                </div>
+            </aside>
         </div>
     </main>
-    <!-- Floating Action Button (FAB) - Specific for generating new entries -->
-    <button
-        className="fixed bottom-10 right-10 w-20 h-20 bg-primary shadow-[20px_20px_40px_rgba(122,0,36,0.15)] flex items-center justify-center group hover:bg-secondary-container transition-all duration-300 z-50">
-        <span className="material-symbols-outlined text-white group-hover:text-primary text-4xl"
-            style="font-variation-settings: 'FILL' 1;">add</span>
-    </button>
 </body>
 
 </html>
