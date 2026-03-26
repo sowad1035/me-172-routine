@@ -8,12 +8,12 @@ export default function Home() {
             <div className="mx-auto px-8 py-20">
                 <div className="mb-8">
                     <h1
-                        className="font-headline text-7xl md:text-9xl font-black text-on-background tracking-tighter leading-[0.85] uppercase">
+                        className="font-headline text-5xl md:text-7xl font-black text-on-background tracking-tighter leading-[0.85] uppercase">
                         Add New<br /><span className="text-primary">Teacher</span>
                     </h1>
                 </div>
 
-                <div className="bg-white/10 dark:bg-white/5 backdrop-blur-2xl rounded-2xl border border-white/20 dark:border-white/10 p-8 shadow-2xl">
+                <div className="bg-white/10 backdrop-blur-2xl rounded-2xl border border-white/20 dark:border-white/10 p-8 shadow-2xl">
                     <Form action={create} className="space-y-20">
                         <section>
                             <div className="flex items-baseline gap-4 mb-10">

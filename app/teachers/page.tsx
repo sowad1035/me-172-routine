@@ -17,7 +17,7 @@ export default async function Home() {
               Teachers
             </h1>
             <Link href="/teachers/add"
-              className="bg-primary text-white font-label font-bold uppercase tracking-[0.2em] px-12 py-6 flex items-center gap-4 hover:bg-[#a50034] transition-all transform active:scale-95">
+              className="mb-4 bg-primary text-white font-label font-bold uppercase tracking-[0.2em] px-12 py-6 flex items-center gap-4 hover:bg-[#a50034] transition-all transform active:scale-95">
               <span className="material-symbols-outlined" data-icon="add">add</span>
               <span>Add Teacher</span>
             </Link>
@@ -35,7 +35,7 @@ export default async function Home() {
                   </tr>
                 </thead>
                 <tbody>
-                  {teachers.map((teacher, idx) => (
+                  {teachers.map((teacher) => (
                     <tr key={teacher.id} className="font-label text-[22px] border-b border-white/20 hover:bg-white/5 transition-colors">
                       <td className="px-6 py-4 font-medium">{teacher.name}</td>
                       <td className="px-6 py-4">
