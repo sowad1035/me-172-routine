@@ -9,7 +9,7 @@ export default async function Home() {
 
   return (
     <main className="lg:ml-80 pt-24 min-h-screen">
-      <div className="max-w-7xl mx-auto px-8 py-20">
+      <div className="mx-auto px-8 py-20">
         <div className="space-y-6 relative z-10">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <h1

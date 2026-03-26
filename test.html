@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 
-<html class="light" lang="en">
+<html lang="en">
 
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Add Course | BUET Academic Rebel</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link
-        href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;900&amp;family=Space+Grotesk:wght@300;500;700&amp;family=Newsreader:ital,wght@0,400;0,600;1,400&amp;display=swap"
+        href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700;900&amp;family=Space+Grotesk:wght@400;700&amp;family=Newsreader:ital,wght@0,400;0,600;1,400&amp;display=swap"
         rel="stylesheet" />
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
@@ -82,11 +83,25 @@
     <style>
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
         }
 
         body {
             background-color: #f9f9f9;
             color: #1a1c1c;
+        }
+
+        input:focus {
+            outline: none;
+            border-bottom-color: #feb700 !important;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #a50034;
         }
     </style>
 </head>
@@ -94,358 +109,304 @@
 <body class="font-body selection:bg-secondary-container selection:text-on-secondary-container">
     <!-- TopNavBar -->
     <nav
-        class="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-xl flex justify-between items-center px-8 h-20">
+        class="bg-white/80 dark:bg-stone-950/80 backdrop-blur-xl fixed top-0 z-50 flex justify-between items-center w-full px-8 h-20">
         <div class="flex items-center gap-4">
             <span class="text-2xl font-black text-[#a50034] tracking-tighter font-headline uppercase">BUET Academic
                 Rebel</span>
         </div>
         <div class="flex items-center gap-6">
-            <button class="text-stone-500 hover:text-[#feb700] transition-colors duration-200">
-                <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
-            </button>
-            <button class="text-stone-500 hover:text-[#feb700] transition-colors duration-200">
-                <span class="material-symbols-outlined" data-icon="settings">settings</span>
-            </button>
-            <div class="h-10 w-10 bg-surface-container-highest flex items-center justify-center overflow-hidden">
-                <img alt="User Profile Avatar" class="object-cover w-full h-full"
-                    data-alt="Professional headshot of a senior academic administrator in a suit with a neutral background"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUkVemz9O45kprIRKXGQWc4o6nQnjlTWC-VdEKJ0T-BFX9XGkjJPxWYuFQbrFqWg0hBuUyYNQDfCG-JezNDhnJ6hllmvi2dnfENNmldprPSiMQRwvx4pcQCd4BPSzKgnhxOXsL59P1RYQJ9-vrdwQ_rgbox6kQumHepKmFt-zxM3jLx146aY50UmukBLgBQeDgXwEU_7G922eTp1qObZtVOUzvP4ALr8Fj0MBn1DYfRQWszgK_JdabjFzVOCgE7edggT_y_-XMvy4x" />
-            </div>
+            <button
+                class="material-symbols-outlined text-stone-500 hover:text-[#feb700] transition-colors duration-200">notifications</button>
+            <button
+                class="material-symbols-outlined text-stone-500 hover:text-[#feb700] transition-colors duration-200">settings</button>
+            <img alt="User Profile Avatar" class="w-10 h-10 object-cover rounded-full"
+                data-alt="Professional headshot of a university administrator with a clean background and soft studio lighting"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKJHGOzL4Xv4wKx6riH8Co_z-45BLD0VW4b9HhH0qaTuUEC9HU0NoHX8gew4WiDUpPcBLx7d9c7M2q7I8KJ0WRz_BXZhBnDHqSbi5n8rwz5j4KvvrZ91t8-XjbHapXCAPINnXvq90MKQzzJQ7mg4r_FNNnSYSPug_0_45rsVM314EyrbZaXtDuxh8QP1IoT5n7ZGKxAIWPXmAr7C5PVu64UIBFIPnDJj_tFgo435F2FN9n-YbMsVDL8faAGNSTDt2FW4-uyhTwnFqk" />
         </div>
     </nav>
     <!-- SideNavBar -->
-    <aside class="fixed left-0 top-0 h-full w-64 bg-[#f9f9f9] flex flex-col p-6 z-40 pt-24">
-        <div class="mb-10">
-            <h2 class="text-xl font-black text-[#a50034] tracking-tighter font-headline uppercase">BUET</h2>
-            <p class="font-label text-xs font-bold uppercase tracking-widest text-stone-500">Academic Rebel</p>
+    <aside class="fixed left-0 top-0 h-full flex flex-col p-6 z-40 bg-[#f9f9f9] dark:bg-stone-950 w-64 hidden md:flex">
+        <div class="mb-12 mt-20">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white"
+                        style="font-variation-settings: 'FILL' 1;">school</span>
+                </div>
+                <div>
+                    <h2 class="font-headline font-black text-xl text-[#a50034] tracking-tighter leading-none">BUET</h2>
+                    <p class="font-label text-[10px] font-bold uppercase tracking-widest text-stone-500">Academic Rebel
+                    </p>
+                </div>
+            </div>
         </div>
-        <nav class="flex flex-col gap-2 flex-grow">
-            <a class="flex items-center gap-3 px-4 py-3 font-label text-xs font-bold uppercase tracking-widest text-stone-600 hover:translate-x-1 transition-transform duration-200"
+        <nav class="flex-1 space-y-2">
+            <a class="flex items-center gap-4 px-4 py-3 font-label text-xs font-bold uppercase tracking-widest text-stone-600 hover:translate-x-1 transition-transform duration-200"
                 href="#">
-                <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-                <span>Dashboard</span>
+                <span class="material-symbols-outlined">dashboard</span> Dashboard
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 font-label text-xs font-bold uppercase tracking-widest text-stone-600 hover:translate-x-1 transition-transform duration-200"
+            <a class="flex items-center gap-4 px-4 py-3 font-label text-xs font-bold uppercase tracking-widest text-stone-600 hover:translate-x-1 transition-transform duration-200"
                 href="#">
-                <span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
-                <span>Routine</span>
+                <span class="material-symbols-outlined">calendar_today</span> Routine
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 font-label text-xs font-bold uppercase tracking-widest bg-[#a50034] text-white"
+            <a class="flex items-center gap-4 px-4 py-3 font-label text-xs font-bold uppercase tracking-widest text-stone-600 hover:translate-x-1 transition-transform duration-200"
                 href="#">
-                <span class="material-symbols-outlined" data-icon="groups">groups</span>
-                <span>Faculty</span>
+                <span class="material-symbols-outlined">groups</span> Faculty
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 font-label text-xs font-bold uppercase tracking-widest text-stone-600 hover:translate-x-1 transition-transform duration-200"
+            <a class="flex items-center gap-4 px-4 py-3 font-label text-xs font-bold uppercase tracking-widest bg-[#a50034] text-white"
                 href="#">
-                <span class="material-symbols-outlined" data-icon="library_books">library_books</span>
-                <span>Courses</span>
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">library_books</span>
+                Courses
             </a>
         </nav>
-        <div class="mt-auto flex flex-col gap-2">
+        <div class="mt-auto pt-6 space-y-2 border-t border-transparent">
             <button
-                class="bg-[#feb700] text-black font-label text-xs font-bold uppercase tracking-widest py-4 mb-6 hover:opacity-90 active:scale-95 transition-all">
+                class="w-full bg-secondary-container text-on-secondary-container py-4 font-label text-xs font-black uppercase tracking-widest hover:opacity-90 transition-opacity mb-4">
                 New Entry
             </button>
-            <a class="flex items-center gap-3 px-4 py-2 font-label text-xs font-bold uppercase tracking-widest text-stone-500 hover:text-primary transition-colors"
+            <a class="flex items-center gap-4 px-4 py-2 font-label text-[10px] font-bold uppercase tracking-widest text-stone-500 hover:text-primary transition-colors"
                 href="#">
-                <span class="material-symbols-outlined" data-icon="help">help</span>
-                <span>Support</span>
+                <span class="material-symbols-outlined text-sm">help</span> Support
             </a>
-            <a class="flex items-center gap-3 px-4 py-2 font-label text-xs font-bold uppercase tracking-widest text-stone-500 hover:text-primary transition-colors"
+            <a class="flex items-center gap-4 px-4 py-2 font-label text-[10px] font-bold uppercase tracking-widest text-stone-500 hover:text-primary transition-colors"
                 href="#">
-                <span class="material-symbols-outlined" data-icon="logout">logout</span>
-                <span>Logout</span>
+                <span class="material-symbols-outlined text-sm">logout</span> Logout
             </a>
         </div>
     </aside>
     <!-- Main Content Canvas -->
-    <main class="pl-64 pt-20 min-h-screen bg-surface">
-        <div class="flex flex-col lg:flex-row min-h-[calc(100vh-5rem)]">
-            <!-- Center Canvas: Teachers List -->
-            <section class="flex-grow p-10 lg:p-16">
-                <header class="mb-16">
-                    <h1
-                        class="font-headline text-8xl font-black uppercase tracking-tighter text-primary leading-none mb-4">
-                        Teachers
-                    </h1>
-                    <div class="flex items-baseline gap-4">
-                        <span class="font-label text-2xl font-bold text-secondary">84</span>
-                        <span class="font-body italic text-xl text-stone-500">total faculty members registered</span>
-                    </div>
-                </header>
-                <div class="space-y-12">
-                    <!-- Table Header -->
-                    <div
-                        class="grid grid-cols-12 gap-4 pb-4 border-b-2 border-outline-variant font-label text-[10px] uppercase tracking-[0.2em] font-bold text-stone-400">
-                        <div class="col-span-1">Rank</div>
-                        <div class="col-span-4">Faculty Member</div>
-                        <div class="col-span-3">Designation</div>
-                        <div class="col-span-3">Workload</div>
-                        <div class="col-span-1 text-right">Actions</div>
-                    </div>
-                    <!-- Faculty Row 1 -->
-                    <div class="grid grid-cols-12 gap-4 items-center group">
-                        <div class="col-span-1">
+    <main class="md:ml-64 pt-24 pb-20 px-8 md:px-12">
+        <header class="mb-16">
+            <p class="font-label text-sm font-bold text-primary mb-2 uppercase tracking-widest">Administration /
+                Academic Catalog</p>
+            <h1
+                class="font-headline text-7xl md:text-9xl font-black text-on-background tracking-tighter leading-[0.85] uppercase">
+                Add New<br /><span class="text-primary">Course</span>
+            </h1>
+        </header>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+            <!-- Left Column: The Form -->
+            <div class="lg:col-span-8">
+                <form class="space-y-20">
+                    <!-- Section: Course Info -->
+                    <section>
+                        <div class="flex items-baseline gap-4 mb-10">
+                            <span class="font-headline text-5xl text-primary-fixed-dim select-none">01</span>
+                            <h3 class="font-headline text-3xl uppercase font-black tracking-tight">Course Info</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+                            <div class="relative group col-span-2">
+                                <label
+                                    class="font-label text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Full
+                                    Course Title</label>
+                                <input
+                                    class="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-4 text-3xl font-headline tracking-tight focus:ring-0 placeholder:text-stone-300"
+                                    placeholder="e.g. Advanced Fluid Dynamics" type="text" />
+                            </div>
+                            <div class="relative group">
+                                <label
+                                    class="font-label text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Course
+                                    Code</label>
+                                <input
+                                    class="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-3 text-xl font-label focus:ring-0 placeholder:text-stone-300"
+                                    placeholder="ME 401" type="text" />
+                            </div>
+                            <div class="relative group">
+                                <label
+                                    class="font-label text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Credit
+                                    Hours</label>
+                                <select
+                                    class="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-3 text-xl font-label focus:ring-0 appearance-none">
+                                    <option>3.00</option>
+                                    <option>4.00</option>
+                                    <option>1.50 (Sessional)</option>
+                                </select>
+                            </div>
+                            <div class="relative group col-span-2">
+                                <label
+                                    class="font-label text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Description</label>
+                                <textarea
+                                    class="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-3 text-lg font-body italic focus:ring-0 placeholder:text-stone-300 resize-none"
+                                    placeholder="Define the core objectives and syllabus summary..."
+                                    rows="3"></textarea>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Section: Department Allocation -->
+                    <section>
+                        <div class="flex items-baseline gap-4 mb-10">
+                            <span class="font-headline text-5xl text-primary-fixed-dim select-none">02</span>
+                            <h3 class="font-headline text-3xl uppercase font-black tracking-tight">Department Allocation
+                            </h3>
+                        </div>
+                        <div class="bg-surface-container-low p-8">
+                            <p class="font-body italic text-stone-600 mb-6 max-w-xl">Assign this course to one or
+                                multiple departments for curriculum synchronization. Selected departments will have
+                                immediate access to syllabus nodes.</p>
+                            <div class="flex flex-wrap gap-3 mb-8">
+                                <div class="bg-primary text-white px-4 py-2 flex items-center gap-3">
+                                    <span class="font-label text-xs font-bold uppercase tracking-widest">Mechanical
+                                        Eng.</span>
+                                    <button
+                                        class="material-symbols-outlined text-sm hover:text-secondary-container">close</button>
+                                </div>
+                                <div class="bg-primary text-white px-4 py-2 flex items-center gap-3">
+                                    <span class="font-label text-xs font-bold uppercase tracking-widest">Naval
+                                        Architecture</span>
+                                    <button
+                                        class="material-symbols-outlined text-sm hover:text-secondary-container">close</button>
+                                </div>
+                                <button
+                                    class="border-2 border-dashed border-stone-300 text-stone-400 px-4 py-2 flex items-center gap-2 hover:border-primary hover:text-primary transition-colors">
+                                    <span class="material-symbols-outlined text-sm">add</span>
+                                    <span class="font-label text-xs font-bold uppercase tracking-widest">Add Dept</span>
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Section: Assigned Teachers -->
+                    <section>
+                        <div class="flex items-baseline gap-4 mb-10">
+                            <span class="font-headline text-5xl text-primary-fixed-dim select-none">03</span>
+                            <h3 class="font-headline text-3xl uppercase font-black tracking-tight">Assigned Teachers
+                            </h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Teacher Card 1 -->
                             <div
-                                class="w-10 h-10 flex items-center justify-center border-2 border-primary text-primary font-label font-bold text-sm">
-                                01</div>
-                        </div>
-                        <div class="col-span-4 flex items-center gap-4">
-                            <div class="w-12 h-12 bg-surface-container-high overflow-hidden">
-                                <img alt="Faculty Portrait"
-                                    class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-                                    data-alt="Close up portrait of a middle-aged female professor with glasses in an academic setting with soft library lighting"
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDa3tCQzu1Kk5mtGnzYAxKXERXFTpUABNKl57810sJ38couEKVocn9jidWZKk182cRZbzbi8el9-LkSkk2m6XLgPjzI-yPGvBmq2HWi1eOAay9UXo2J-ztKwh8sjWz45yu8uxQcCU2CZjsLNTo7C9kAHK2tKD2kFDnXMgtSSXZ9rJXeQaGtoEb2WXD6j82Vdq8Q5Xd_ASA98V6_AKXqyrIp8E_qZSs1UENo14gj2J0c5JRwcMewTrSzNOwacxAVO6mpDfbYphpjX2n" />
-                            </div>
-                            <div>
-                                <h3 class="font-headline font-bold text-lg text-on-surface leading-tight">Dr. Sarah
-                                    Rahman</h3>
-                                <p class="font-label text-[10px] text-stone-400 uppercase tracking-widest">ID:
-                                    BU-CSE-001</p>
-                            </div>
-                        </div>
-                        <div class="col-span-3">
-                            <span
-                                class="bg-primary text-white font-label text-[10px] font-bold uppercase px-3 py-1 tracking-widest">Senior
-                                Professor</span>
-                        </div>
-                        <div class="col-span-3">
-                            <div class="flex flex-col gap-1">
-                                <div
-                                    class="flex justify-between font-label text-[10px] font-bold uppercase text-stone-500">
-                                    <span>92% Density</span>
-                                    <span>22 hrs/wk</span>
+                                class="bg-white border-l-4 border-primary p-6 flex items-center gap-6 group hover:bg-surface-container-high transition-colors">
+                                <img alt="Dr. Sarah Rahman"
+                                    class="w-16 h-16 object-cover grayscale group-hover:grayscale-0 transition-all"
+                                    data-alt="Portrait of a female professor in an academic setting with bookshelves and warm lighting"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHyvI8bR6Fg_KLfPo26k4iz-x941H0_ZOJsYnp-k8IJJn9KRbBaIhMG7fSbV9TPBB_naloPdJ2AbeAOsvRFYlG0Y6Cbv_WwC_ewoIPbzeUZYfYVd39kyfFulmPNHe--dqdRlGGAOZRhUnSOv9jx0ghqf_bYpY2cnBdnc-SsC_IwP6b3TRjhts4RIRA0KXNoWqW0zOcsGneOys1-cJhcl3HSwp1cXoXmTqcmk0c2RsAHnIkHcy6_wsAqC6_0Zu0aG-lIPm20OUmiXAd" />
+                                <div class="flex-1">
+                                    <h4 class="font-headline font-bold text-lg leading-tight uppercase">Dr. Sarah Rahman
+                                    </h4>
+                                    <p class="font-label text-[10px] text-stone-500 uppercase tracking-widest mb-2">Lead
+                                        Instructor</p>
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-primary text-sm">schedule</span>
+                                        <span class="font-label text-xs font-bold uppercase">09 Hours/Week</span>
+                                    </div>
                                 </div>
-                                <div class="w-full bg-surface-container-highest h-1">
-                                    <div class="bg-primary h-full" style="width: 92%;"></div>
-                                </div>
+                                <button
+                                    class="material-symbols-outlined text-stone-300 hover:text-error transition-colors">delete_forever</button>
                             </div>
-                        </div>
-                        <div class="col-span-1 text-right">
-                            <button class="text-stone-300 hover:text-primary transition-colors">
-                                <span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+                            <!-- Teacher Card 2 -->
+                            <div
+                                class="bg-white border-l-4 border-stone-200 p-6 flex items-center gap-6 group hover:bg-surface-container-high transition-colors">
+                                <img alt="Prof. Ahmed Kabir"
+                                    class="w-16 h-16 object-cover grayscale group-hover:grayscale-0 transition-all"
+                                    data-alt="Senior male academic with glasses in a professional studio portrait with soft lighting"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZE7SteIR-SfL4GLJDyjsF-qxFTY5ZhGW0ImRu9LaMnixzGMfT434ZCLk37TL28_ljUBxj9sbsnCA9a3PRuc6Int-ePW_n3FPA0PxL9i23Hgl2DApvjb_34f79i-qccLkkIf38OqGLsfXkujXJHWPETdMt7rgcZzYBgCBzwCM0aVzc2yuoWuF4WbevY-TlxQclsG1J0wLbg9lltCbDT02Wi2T0Vr5CZ_NurerxPCvccHJ989SSrr7k9YV1EEkGgc25NIdPLRSTV9C9" />
+                                <div class="flex-1">
+                                    <h4 class="font-headline font-bold text-lg leading-tight uppercase">Prof. Ahmed
+                                        Kabir</h4>
+                                    <p class="font-label text-[10px] text-stone-500 uppercase tracking-widest mb-2">
+                                        Guest Lecturer</p>
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-primary text-sm">schedule</span>
+                                        <span class="font-label text-xs font-bold uppercase">03 Hours/Week</span>
+                                    </div>
+                                </div>
+                                <button
+                                    class="material-symbols-outlined text-stone-300 hover:text-error transition-colors">delete_forever</button>
+                            </div>
+                            <button
+                                class="border-2 border-dashed border-stone-300 p-6 flex flex-col items-center justify-center gap-2 text-stone-400 hover:border-primary hover:text-primary transition-all">
+                                <span class="material-symbols-outlined text-3xl">person_add</span>
+                                <span class="font-label text-xs font-bold uppercase tracking-widest">Assign Additional
+                                    Faculty</span>
                             </button>
                         </div>
-                    </div>
-                    <!-- Faculty Row 2 -->
-                    <div class="grid grid-cols-12 gap-4 items-center group">
-                        <div class="col-span-1">
-                            <div
-                                class="w-10 h-10 flex items-center justify-center border-2 border-stone-300 text-stone-400 font-label font-bold text-sm">
-                                02</div>
-                        </div>
-                        <div class="col-span-4 flex items-center gap-4">
-                            <div class="w-12 h-12 bg-surface-container-high overflow-hidden">
-                                <img alt="Faculty Portrait"
-                                    class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-                                    data-alt="Professional headshot of a male professor in a laboratory setting with subtle blue backlighting"
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBP99gEwhg1dRZqH2cbGz5YWvNftF5xHfjmA1SnU2EccqNG5d3X1W5WbfaasrWpfK6qvE1wvd7pR7pEgThYDBBV7sMquyRidkTeNHkbOnnIcoKFDRHfuj5FncaVfEYaNZXhFzKq4C7EbGc--mJE-LwC_U54JrWhGPmi0nihTS6dCQB8aD8_2KLIbRNHzBJOPhZWbc6FCWEn8yPLTQHR00ZY7VdBNRz8HItSAanCvPHenne_I4ipiCzhQK6guMr3ISZMFKF7D6KOoSXZ" />
-                            </div>
-                            <div>
-                                <h3 class="font-headline font-bold text-lg text-on-surface leading-tight">Prof. Ahmad
-                                    Ullah</h3>
-                                <p class="font-label text-[10px] text-stone-400 uppercase tracking-widest">ID:
-                                    BU-EEE-014</p>
-                            </div>
-                        </div>
-                        <div class="col-span-3">
-                            <span
-                                class="bg-stone-200 text-stone-600 font-label text-[10px] font-bold uppercase px-3 py-1 tracking-widest">Associate
-                                Prof</span>
-                        </div>
-                        <div class="col-span-3">
-                            <div class="flex flex-col gap-1">
-                                <div
-                                    class="flex justify-between font-label text-[10px] font-bold uppercase text-stone-500">
-                                    <span>75% Density</span>
-                                    <span>18 hrs/wk</span>
-                                </div>
-                                <div class="w-full bg-surface-container-highest h-1">
-                                    <div class="bg-secondary h-full" style="width: 75%;"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-span-1 text-right">
-                            <button class="text-stone-300 hover:text-primary transition-colors">
-                                <span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
-                            </button>
-                        </div>
-                    </div>
-                    <!-- Faculty Row 3 -->
-                    <div class="grid grid-cols-12 gap-4 items-center group">
-                        <div class="col-span-1">
-                            <div
-                                class="w-10 h-10 flex items-center justify-center border-2 border-stone-300 text-stone-400 font-label font-bold text-sm">
-                                03</div>
-                        </div>
-                        <div class="col-span-4 flex items-center gap-4">
-                            <div class="w-12 h-12 bg-surface-container-high overflow-hidden">
-                                <img alt="Faculty Portrait"
-                                    class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-                                    data-alt="Portrait of a young female academic in a modern classroom setting with bright natural light"
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAehP1iqtWRNbzj_qs4YrT6qUebtfPWWVeUHiPtF99mEM6-bTGwxH3DG9P1xq_2KsmvDIi_H5q9vFO7jzP0tlnC-lgB5bpBFGuN0wCIo8de83NCyyu9HAeAB_2vYIR1FpbZK2AQEwL3V-Wxj43m0a3xulppd9QDlW39aqRrG8eAgckS5JO2vJjMMdvZ8z1caHY0oVibmK3c48eGsJA70R1-Ift0Dt5pA216sG8d1IGZhjKZnbDBI9YIgcTVYBMY_AZwcSxMhxNz4eo0" />
-                            </div>
-                            <div>
-                                <h3 class="font-headline font-bold text-lg text-on-surface leading-tight">Dr. Farhana
-                                    Yasmin</h3>
-                                <p class="font-label text-[10px] text-stone-400 uppercase tracking-widest">ID:
-                                    BU-ARC-009</p>
-                            </div>
-                        </div>
-                        <div class="col-span-3">
-                            <span
-                                class="bg-stone-200 text-stone-600 font-label text-[10px] font-bold uppercase px-3 py-1 tracking-widest">Assistant
-                                Prof</span>
-                        </div>
-                        <div class="col-span-3">
-                            <div class="flex flex-col gap-1">
-                                <div
-                                    class="flex justify-between font-label text-[10px] font-bold uppercase text-stone-500">
-                                    <span>40% Density</span>
-                                    <span>10 hrs/wk</span>
-                                </div>
-                                <div class="w-full bg-surface-container-highest h-1">
-                                    <div class="bg-stone-300 h-full" style="width: 40%;"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-span-1 text-right">
-                            <button class="text-stone-300 hover:text-primary transition-colors">
-                                <span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
-                            </button>
-                        </div>
-                    </div>
-                    <!-- Faculty Row 4 -->
-                    <div class="grid grid-cols-12 gap-4 items-center group">
-                        <div class="col-span-1">
-                            <div
-                                class="w-10 h-10 flex items-center justify-center border-2 border-stone-300 text-stone-400 font-label font-bold text-sm">
-                                04</div>
-                        </div>
-                        <div class="col-span-4 flex items-center gap-4">
-                            <div class="w-12 h-12 bg-surface-container-high overflow-hidden">
-                                <img alt="Faculty Portrait"
-                                    class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-                                    data-alt="Smiling male faculty member standing in front of an architectural model with soft overhead studio lighting"
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCP9k7UlaTlFW0gAlgKK6o-YdF5pM0pGeGH3TdVeHpZmymv25vOVWuuU8UGvp-IE1BRDP9llvRRQda8wASQbJa6twORCXLflm-PqrsiNivWSshJl1VrrZl3zWbZa601f8dpBJxgqqXyb8zG6tE04zHA8HR55DMM3rwHclvVe9ffxc-LljbiyU68dTrOKU_AaBe-J8Z6coY0bSvOGP5hOIPkVT8yEDogsYhsrwqehjeIABkOSF4b0W1a9_xnAesrYEQP5U91FF7mBCJM" />
-                            </div>
-                            <div>
-                                <h3 class="font-headline font-bold text-lg text-on-surface leading-tight">Lec. Tanvir
-                                    Hasan</h3>
-                                <p class="font-label text-[10px] text-stone-400 uppercase tracking-widest">ID: BU-ME-022
-                                </p>
-                            </div>
-                        </div>
-                        <div class="col-span-3">
-                            <span
-                                class="bg-secondary-container text-on-secondary-container font-label text-[10px] font-bold uppercase px-3 py-1 tracking-widest">Lecturer</span>
-                        </div>
-                        <div class="col-span-3">
-                            <div class="flex flex-col gap-1">
-                                <div
-                                    class="flex justify-between font-label text-[10px] font-bold uppercase text-stone-500">
-                                    <span>88% Density</span>
-                                    <span>20 hrs/wk</span>
-                                </div>
-                                <div class="w-full bg-surface-container-highest h-1">
-                                    <div class="bg-secondary h-full" style="width: 88%;"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-span-1 text-right">
-                            <button class="text-stone-300 hover:text-primary transition-colors">
-                                <span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Floating CTA -->
-                <div class="mt-20">
-                    <button
-                        class="bg-primary text-white font-label font-bold uppercase tracking-[0.2em] px-12 py-6 flex items-center gap-4 hover:bg-[#a50034] transition-all transform active:scale-95">
-                        <span class="material-symbols-outlined" data-icon="add">add</span>
-                        <span>Add Teacher</span>
-                    </button>
-                </div>
-            </section>
-            <!-- Sidebar: Capacity -->
-            <aside
-                class="w-full lg:w-96 bg-surface-container-low p-10 lg:p-16 flex flex-col gap-16 relative overflow-hidden">
-                <!-- Watermark Background -->
-                <div
-                    class="absolute -bottom-10 -right-10 font-headline text-[15rem] font-black text-white/50 pointer-events-none leading-none select-none">
-                    88
-                </div>
-                <div>
-                    <h2 class="font-label text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-12">
-                        Department Capacity</h2>
-                    <div class="space-y-16">
-                        <div>
-                            <p
-                                class="font-headline text-6xl font-black text-on-surface tracking-tighter leading-none mb-2">
-                                1,420</p>
-                            <p class="font-body italic text-stone-500">total instruction hours allocated for Semester
-                                Fall '24</p>
-                        </div>
-                        <div>
-                            <div class="flex items-baseline gap-2 mb-2">
-                                <p
-                                    class="font-headline text-6xl font-black text-secondary tracking-tighter leading-none">
-                                    88%</p>
-                                <span class="font-label text-xs font-bold uppercase text-stone-400">Peak</span>
-                            </div>
-                            <p class="font-body italic text-stone-500">average workload density across all engineering
-                                departments</p>
-                        </div>
-                        <div class="space-y-6">
-                            <h3 class="font-label text-[10px] font-bold uppercase tracking-widest text-stone-400">
-                                Distribution</h3>
-                            <div class="flex h-12 w-full">
-                                <div class="bg-primary h-full" style="width: 45%;" title="Core Faculty"></div>
-                                <div class="bg-secondary h-full" style="width: 30%;" title="Guest Lecturers"></div>
-                                <div class="bg-stone-300 h-full" style="width: 15%;" title="Teaching Assistants"></div>
-                                <div class="bg-stone-800 h-full" style="width: 10%;" title="Visiting Professors"></div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="flex items-center gap-2">
-                                    <span class="w-3 h-3 bg-primary"></span>
-                                    <span class="font-label text-[10px] font-bold uppercase text-stone-500">Core
-                                        (45%)</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <span class="w-3 h-3 bg-secondary"></span>
-                                    <span class="font-label text-[10px] font-bold uppercase text-stone-500">Guest
-                                        (30%)</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <span class="w-3 h-3 bg-stone-300"></span>
-                                    <span class="font-label text-[10px] font-bold uppercase text-stone-500">TA
-                                        (15%)</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <span class="w-3 h-3 bg-stone-800"></span>
-                                    <span class="font-label text-[10px] font-bold uppercase text-stone-500">Visit
-                                        (10%)</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-auto pt-12">
-                    <div class="p-8 bg-primary-container text-white">
-                        <h4 class="font-headline font-bold text-xl mb-4 leading-tight">Capacity Alert: Mechanical Dept.
-                            reaching 94% limit.</h4>
-                        <p class="font-body text-sm mb-6 opacity-80">Consider redistributing course loads for next term
-                            to prevent burnout.</p>
+                    </section>
+                    <!-- Form Actions -->
+                    <div class="pt-10 flex flex-col md:flex-row gap-6">
                         <button
-                            class="font-label text-[10px] font-bold uppercase tracking-widest border-b-2 border-white/40 pb-1 hover:border-white transition-all">
-                            Review Allocation
+                            class="bg-primary text-white px-12 py-6 font-label text-sm font-black uppercase tracking-[0.2em] flex items-center justify-center gap-4 hover:bg-[#a50034] transition-colors group"
+                            type="submit">
+                            Finalize Course Entry
+                            <span
+                                class="material-symbols-outlined group-hover:translate-x-2 transition-transform">arrow_forward</span>
+                        </button>
+                        <button
+                            class="border-b-2 border-stone-900 px-6 py-6 font-label text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors"
+                            type="button">
+                            Save as Draft
                         </button>
                     </div>
+                </form>
+            </div>
+            <!-- Right Column: Status & Meta -->
+            <div class="lg:col-span-4 space-y-8">
+                <!-- Status Card: Curriculum Sync -->
+                <div class="bg-white p-8 relative overflow-hidden">
+                    <div
+                        class="absolute -top-4 -right-4 font-headline text-8xl text-stone-50 select-none pointer-events-none">
+                        A</div>
+                    <div class="relative z-10">
+                        <div class="w-12 h-12 bg-secondary-container flex items-center justify-center mb-6">
+                            <span class="material-symbols-outlined text-on-secondary-container"
+                                style="font-variation-settings: 'FILL' 1;">sync</span>
+                        </div>
+                        <h4 class="font-headline text-xl font-black uppercase tracking-tight mb-2">Curriculum Sync</h4>
+                        <p class="font-body text-stone-600 leading-relaxed mb-6">
+                            System is currently validating prerequisites and overlap with <span
+                                class="text-primary font-bold">ME 302</span>. Ensure no credit hour collisions.
+                        </p>
+                        <div class="flex items-center gap-2">
+                            <div class="h-1 flex-1 bg-stone-100 overflow-hidden">
+                                <div class="h-full bg-secondary-container w-[75%]"></div>
+                            </div>
+                            <span class="font-label text-[10px] font-black">75%</span>
+                        </div>
+                    </div>
                 </div>
-            </aside>
+                <!-- Status Card: Resource Allocation -->
+                <div class="bg-primary-container text-white p-8">
+                    <div class="flex justify-between items-start mb-10">
+                        <div class="w-12 h-12 border border-white/20 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white">analytics</span>
+                        </div>
+                        <span
+                            class="font-label text-[10px] border border-white/30 px-2 py-1 uppercase tracking-widest">High
+                            Priority</span>
+                    </div>
+                    <h4 class="font-headline text-xl font-black uppercase tracking-tight mb-4">Resource Allocation</h4>
+                    <ul class="space-y-4 font-label text-xs uppercase tracking-widest font-bold">
+                        <li class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-secondary-container text-sm"
+                                style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                            Room Available: ME Hall 102
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-secondary-container text-sm"
+                                style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                            Lab Equipment: Verified
+                        </li>
+                        <li class="flex items-center gap-3 text-white/50">
+                            <span class="material-symbols-outlined text-sm">radio_button_unchecked</span>
+                            Software Licenses: Pending
+                        </li>
+                    </ul>
+                </div>
+                <!-- Help Block -->
+                <div class="bg-surface-container-highest p-8">
+                    <h5 class="font-headline text-sm font-black uppercase tracking-widest mb-4">Rebel Tip</h5>
+                    <p class="font-body italic text-stone-700 leading-relaxed">
+                        "Brutal honesty in course objectives reduces dropout rates. Define the rigor before the first
+                        lecture."
+                    </p>
+                </div>
+            </div>
         </div>
     </main>
+    <!-- Footer Meta (Mobile only or extra spacing) -->
+    <footer class="mt-20 px-8 py-10 border-t border-stone-200 md:hidden">
+        <div class="flex justify-between items-center opacity-50">
+            <span class="font-label text-[10px] uppercase font-black tracking-widest">BUET Academic Control</span>
+            <span class="font-label text-[10px] uppercase font-black tracking-widest">V 2.0.4-Rebel</span>
+        </div>
+    </footer>
 </body>
 
 </html>
