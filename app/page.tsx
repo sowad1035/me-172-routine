@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { departments } from "./lib/helper";
 import { fetchSectionsByDept } from "./lib/section-client";
 import Form from "next/form";
@@ -9,8 +9,7 @@ import { getAll } from "./lib/teachers-client";
 import RegenerateButton from "@/components/Regenerate-Button";
 import { useSearchParams } from "next/navigation";
 
-export default function Home() {
-
+function Content() {
   const searchParams = useSearchParams();
   const success = searchParams.get("success");
 
@@ -240,5 +239,14 @@ export default function Home() {
         </footer>
       </div>
     </main>
+  )
+}
+
+export default function Home() {
+
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <Content />
+    </Suspense>
   );
 }

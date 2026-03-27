@@ -1,9 +1,9 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 
-export default function TeacherTimetablePage() {
+function Content() {
     const searchParams = useSearchParams();
     const teacherId = searchParams.get("teacherId");
     const teacherName = searchParams.get("name");
@@ -161,4 +161,10 @@ export default function TeacherTimetablePage() {
             </div>
         </main>
     );
+}
+
+export default async function TeacherTimetablePage() {
+
+    return <Suspense fallback={<div>Loading...</div>}><Content /></Suspense>;
+
 }

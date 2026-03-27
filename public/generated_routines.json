@@ -1,10 +1,10 @@
 {
   "metadata": {
-    "generatedAt": "2026-03-26T08:20:50.455Z",
+    "generatedAt": "2026-03-27T11:24:28.366Z",
     "totalSections": 3,
-    "totalCourses": 8,
+    "totalCourses": 9,
     "totalTeachers": 86,
-    "totalClassrooms": 5,
+    "totalClassrooms": 6,
     "unplacedSessions": 0,
     "capacityIssues": 0
   },
@@ -14,7 +14,44 @@
       "sectionCode": "A",
       "department": "ME",
       "term": "L1_T1",
-      "assignments": []
+      "assignments": [
+        {
+          "courseId": "cmn8spar2000088vyxagkuw0n",
+          "courseTitle": "Test",
+          "courseCode": "test-123",
+          "teacherId": "cmlt9bpk0000004l8lvm6wlcw",
+          "teacherName": "Md. Zahid Hossain",
+          "classroomId": "cmluuag06000304l7l5dczrb0",
+          "classroomCode": "ME-510",
+          "day": "Saturday",
+          "startHour": 8,
+          "duration": 1
+        },
+        {
+          "courseId": "cmn8spar2000088vyxagkuw0n",
+          "courseTitle": "Test",
+          "courseCode": "test-123",
+          "teacherId": "cmlt8z6f3000604l72dni6kho",
+          "teacherName": "Dr. K M Ariful Kabir",
+          "classroomId": "cmluuag06000304l7l5dczrb0",
+          "classroomCode": "ME-510",
+          "day": "Saturday",
+          "startHour": 9,
+          "duration": 1
+        },
+        {
+          "courseId": "cmn8spar2000088vyxagkuw0n",
+          "courseTitle": "Test",
+          "courseCode": "test-123",
+          "teacherId": "cmlt9bpk0000004l8lvm6wlcw",
+          "teacherName": "Md. Zahid Hossain",
+          "classroomId": "cmluuag06000304l7l5dczrb0",
+          "classroomCode": "ME-510",
+          "day": "Saturday",
+          "startHour": 10,
+          "duration": 1
+        }
+      ]
     },
     {
       "sectionId": "cmluxscoc000104jybr5s994n",
@@ -275,6 +312,19 @@
   "conflicts": [],
   "teacherLoads": [
     {
+      "teacherId": "cmlt9bpk0000004l8lvm6wlcw",
+      "teacherName": "Md. Zahid Hossain",
+      "weeklyLoadHours": 2,
+      "seniority": "Lecturer",
+      "limit": 25
+    },
+    {
+      "teacherId": "cmlt8z6f3000604l72dni6kho",
+      "teacherName": "Dr. K M Ariful Kabir",
+      "weeklyLoadHours": 4,
+      "seniority": "AssistantProfessor"
+    },
+    {
       "teacherId": "cmlt8mjgy000104l71pktea44",
       "teacherName": "Dr. Mohammad Jellur Rahman",
       "weeklyLoadHours": 3,
@@ -314,12 +364,6 @@
       "weeklyLoadHours": 1,
       "seniority": "Professor",
       "limit": 12
-    },
-    {
-      "teacherId": "cmlt8z6f3000604l72dni6kho",
-      "teacherName": "Dr. K M Ariful Kabir",
-      "weeklyLoadHours": 3,
-      "seniority": "AssistantProfessor"
     },
     {
       "teacherId": "cmlt4jlyd000004l71lx6law3",

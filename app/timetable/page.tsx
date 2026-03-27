@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 
 interface TimetablePageProps {
     searchParams: Promise<{
@@ -11,11 +11,7 @@ interface TimetablePageProps {
     }>;
 }
 
-export default function TimetablePage({
-    searchParams,
-}: {
-    searchParams: Promise<{ dept: string; section: string; term: string }>;
-}) {
+function Content() {
     const searchParamsObj = useSearchParams();
     const dept = searchParamsObj.get("dept");
     const section = searchParamsObj.get("section");
@@ -174,4 +170,8 @@ export default function TimetablePage({
             </div>
         </main>
     );
+}
+
+export default function TimetablePage() {
+    return <Suspense fallback={<div>Loading...</div>}><Content /></Suspense>;
 }
