@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-    { label: "Generate", href: "/", icon: "app_spark" },
+    { label: "Generate", href: "/", icon: "wand_stars" },
     { label: "Faculty", href: "/teachers", icon: "groups_3" },
     { label: "Classrooms", href: "/classrooms", icon: "room_preferences" },
     { label: "Sections", href: "/sections", icon: "group_work" },
