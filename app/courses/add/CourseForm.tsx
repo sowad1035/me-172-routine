@@ -46,123 +46,141 @@ export default function CourseForm({ teachers }: { teachers: { id: string, name:
                 <input key={index} type="hidden" name={`teacher_count_department_${index + 1}`} value={count} />
             ))}
             <input type="hidden" name="department_count" value={departmentCount} />
-            <div className="space-y-4">
-                <div>
-                    <label className="block mb-2">Title</label>
-                    <input type="text" name="title" className="w-full border rounded p-2" placeholder="Enter course title" />
+            <section className="space-y-4">
+                <div className="flex items-baseline gap-4 mb-10">
+                    <h3 className="font-headline text-3xl uppercase font-black tracking-tight">Course Info</h3>
                 </div>
-                <div className="flex items-center justify-between space-x-4">
-                    <div className="w-1/2">
-                        <label className="block mb-2">Short Code</label>
-                        <input type="text" name="short_code" className="w-full border rounded p-2" placeholder="Enter course short code" />
-                    </div>
-                    <div className="w-1/2">
-                        <label className="block mb-2">Credit Hours</label>
-                        <input type="number" step="0.25" name="credit_hours" className="w-full border rounded p-2" placeholder="Enter credit hours" />
-                    </div>
-                </div>
-                <div className="space-y-4 p-4 rounded">
-                    {[...Array(departmentCount)].map((_, i) => (
-                        <div key={i} className="space-y-4 p-4 rounded">
-                            <div className="flex items-center justify-between space-x-4">
-                                <div className="w-1/2">
-                                    <label className="block mb-2">Offered To:</label>
-                                    <select name={`department_${i + 1}`} className="w-full border rounded p-2">
-                                        <option value="">Select department</option>
-                                        {departments.map((department) => (
-                                            <option key={department} value={department}>{department}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className="w-1/2">
-                                    <label className="block mb-2">Term:</label>
-                                    <select name={`term_${i + 1}`} className="w-full border rounded p-2">
-                                        <option value="">Select term</option>
-                                        <option value="L1_T1">L1_T1</option>
-                                        <option value="L1_T2">L1_T2</option>
-                                        <option value="L2_T1">L2_T1</option>
-                                        <option value="L2_T2">L2_T2</option>
-                                        <option value="L3_T1">L3_T1</option>
-                                        <option value="L3_T2">L3_T2</option>
-                                        <option value="L4_T1">L4_T1</option>
-                                        <option value="L4_T2">L4_T2</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div>
-                                {Array.from({ length: teacherCount[i] }).map((_, j) => (
-                                    <div key={i + "t" + j} className="mb-4">
-                                        <label className="block mb-2">Teacher {j + 1}:</label>
-                                        <select name={`teacher_${j + 1}_department_${i + 1}`} className="w-full border rounded p-2">
-                                            <option value="">Select teacher</option>
-                                            {teachers.map((teacher) => (
-                                                <option key={teacher.id} value={teacher.id}>{teacher.name}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="flex items-center justify-between text-sm">
-                                <button onClick={() => addNewTeacher(i)} className="flex items-center bg-green-300 px-2 py-1 rounded mt-4 hover:bg-green-200 hover:cursor-pointer" type="button">
-                                    <span className="mr-2">Add Another Teacher</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                    </svg>
-                                </button>
-                                {teacherCount[i] > 1 && (
-                                    <button onClick={() => removeTeacher(i)} className="flex items-center bg-red-800 text-white px-2 py-1 rounded mt-4 hover:bg-red-700 hover:cursor-pointer" type="button">
-                                        <span className="mr-2">Remove Teacher</span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                        </svg>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
 
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-                    ))}
-                    <div className="flex items-center justify-between space-x-4 text-sm">
-                        <button onClick={addNewDepartment} className="flex items-center bg-green-300 px-2 py-1 rounded mt-4 hover:bg-green-200 hover:cursor-pointer" type="button">
-                            <span className="mr-2">Add Another Department</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                            </svg>
-                        </button>
-                        {departmentCount > 1 && (
-                            <button onClick={removeDepartment} className="flex items-center bg-red-800 text-white px-2 py-1 rounded mt-4 hover:bg-red-700 hover:cursor-pointer" type="button">
-                                <span className="mr-2">Remove Department</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        )}
+                    <div className="relative group col-span-2">
+                        <label
+                            className="font-label text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">
+                            Title</label>
+                        <input
+                            name="title"
+                            className="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-4 text-3xl font-headline tracking-tight focus:ring-0 placeholder:text-stone-300"
+                            type="text" />
                     </div>
-                </div>
-                <div className="flex items-center justify-between space-x-4">
-                    <div className="w-1/2">
-                        <label className="block mb-2">Duration:</label>
-                        <input type="number" name="duration" className="w-full border rounded p-2" placeholder="Enter duration in hours" />
+                    <div className="relative group">
+                        <label
+                            className="font-label text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Short Code</label>
+                        <input
+                            name="short_code"
+                            className="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-3 text-xl font-label focus:ring-0 placeholder:text-stone-300"
+                            type="text" />
                     </div>
-                    <div className="w-1/2">
-                        <label className="block mb-2">Type:</label>
-                        <select name="type" className="w-full border rounded p-2">
+                    <div className="relative group">
+                        <label
+                            className="font-label text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Credit Hours</label>
+                        <input
+                            name="credit_hours"
+                            className="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-3 text-xl font-label focus:ring-0 placeholder:text-stone-300"
+                            type="number"
+                            step="0.25"
+                        />
+                    </div>
+                    <div className="relative group">
+                        <label
+                            className="font-label text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Duration</label>
+                        <input
+                            name="duration"
+                            className="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-3 text-xl font-label focus:ring-0 placeholder:text-stone-300"
+                            type="text" />
+                    </div>
+                    <div className="relative group">
+                        <label
+                            className="font-label text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Type</label>
+                        <select
+                            name="type"
+                            className="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-3 text-xl font-label focus:ring-0 appearance-none">
                             <option value="">Select type</option>
                             <option value="Theory">Theory</option>
                             <option value="Lab">Lab</option>
                             <option value="ComputerLab">Computer Lab</option>
                         </select>
                     </div>
+                    <div className="relative group col-span-2">
+                        {[...Array(departmentCount)].map((_, i) => (
+                            <div key={i} className="space-y-4 p-4 my-4 rounded border-2 border-primary border-dashed">
+                                <div className="flex items-center justify-between space-x-4">
+                                    <div className="w-1/2">
+                                        <label
+                                            className="font-label text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Offered To</label>
+                                        <select
+                                            name={`department_${i + 1}`}
+                                            className="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-3 text-xl font-label focus:ring-0 appearance-none">
+                                            <option value="">Select Department</option>
+                                            {departments.map((department) => (
+                                                <option key={department} value={department}>{department}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="w-1/2">
+                                        <label
+                                            className="font-label text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Term:</label>
+                                        <select
+                                            name={`term_${i + 1}`}
+                                            className="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-3 text-xl font-label focus:ring-0 appearance-none">
+                                            <option value="">Select Term</option>
+                                            <option value="L1_T1">L1 T1</option>
+                                            <option value="L1_T2">L1 T2</option>
+                                            <option value="L2_T1">L2 T1</option>
+                                            <option value="L2_T2">L2 T2</option>
+                                            <option value="L3_T1">L3 T1</option>
+                                            <option value="L3_T2">L3 T2</option>
+                                            <option value="L4_T1">L4 T1</option>
+                                            <option value="L4_T2">L4 T2</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    {Array.from({ length: teacherCount[i] }).map((_, j) => (
+                                        <div key={i + "t" + j} className="mb-4">
+                                            <label
+                                                className="font-label text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Teacher {j + 1}:</label>
+                                            <select
+                                                name={`teacher_${j + 1}_department_${i + 1}`}
+                                                className="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-3 text-xl font-label focus:ring-0 appearance-none">
+                                                <option value="">Select teacher</option>
+                                                {teachers.map((teacher) => (
+                                                    <option key={teacher.id} value={teacher.id}>{teacher.name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="flex items-center justify-between text-sm">
+                                    <button type="button" onClick={() => addNewTeacher(i)} className="border-2 border-dashed border-secondary text-secondary px-4 py-2 flex items-center gap-2 hover:border-primary hover:text-primary transition-colors">
+                                        <span className="material-symbols-outlined text-sm">add</span>
+                                        <span className="font-label text-xs font-bold uppercase tracking-widest">Add Another Teacher</span>
+                                    </button>
+                                    {teacherCount[i] > 1 && (
+                                        <button type="button" onClick={() => removeTeacher(i)} className="border-2 border-dashed border-stone-300 text-stone-400 px-4 py-2 flex items-center gap-2 hover:border-primary hover:text-primary transition-colors">
+                                            <span className="material-symbols-outlined text-sm">remove</span>
+                                            <span className="font-label text-xs font-bold uppercase tracking-widest">Remove Teacher</span>
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                        <div className="flex items-center justify-between space-x-4 text-sm">
+                            <button type="button" onClick={addNewDepartment} className="border-2 border-dashed border-primary text-primary px-4 py-2 flex items-center gap-2 hover:border-secondary hover:text-secondary transition-colors">
+                                <span className="material-symbols-outlined text-sm">add</span>
+                                <span className="font-label text-xs font-bold uppercase tracking-widest">Add Dept</span>
+                            </button>
+                            {departmentCount > 1 && (
+                                <button type="button" onClick={removeDepartment} className="border-2 border-dashed border-stone-300 text-stone-400 px-4 py-2 flex items-center gap-2 hover:border-primary hover:text-primary transition-colors">
+                                    <span className="material-symbols-outlined text-sm">remove</span>
+                                    <span className="font-label text-xs font-bold uppercase tracking-widest">Remove Dept</span>
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                    <div className="flex items-center justify-between mt-6">
+                        <SubmitButton />
+                    </div>
                 </div>
-                <div className="flex items-center justify-between mt-6">
-                    <a href="/courses" className="flex items-center bg-gray-500 text-white px-4 py-2 rounded mr-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                        </svg>
-                        <span className="ml-2">Cancel</span>
-                    </a>
-                    <SubmitButton />
-                </div>
-            </div>
+            </section>
         </Form>
     )
 }

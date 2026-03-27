@@ -90,7 +90,7 @@ export default function Home() {
                 <select
                   name="department"
                   onChange={getSections}
-                  className="w-full bg-transparent border-0 border-b-2 border-outline-variant focus:ring-0 focus:border-secondary transition-all font-body text-2xl py-2 appearance-none">
+                  className="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-3 text-xl font-label focus:ring-0 appearance-none">
                   <option value="">{loading ? "Loading..." : "Select Department"}</option>
                   {departments.map((dept) => (
                     <option key={dept} value={dept}>
@@ -106,7 +106,7 @@ export default function Home() {
                     / Term</label>
                   <select
                     name="term"
-                    className="w-full bg-transparent border-0 border-b-2 border-outline-variant focus:ring-0 focus:border-secondary font-body text-2xl py-2 appearance-none">
+                    className="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-3 text-xl font-label focus:ring-0 appearance-none">
                     <option value="L1_T1">L1 T1</option>
                     <option value="L1_T2">L1 T2</option>
                     <option value="L2_T1">L2 T1</option>
@@ -120,7 +120,7 @@ export default function Home() {
                     className="block font-label text-xs font-bold uppercase tracking-widest text-primary mb-2">Section</label>
                   <select
                     name="section"
-                    className="w-full bg-transparent border-0 border-b-2 border-outline-variant focus:ring-0 focus:border-secondary font-body text-2xl py-2 appearance-none">
+                    className="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-3 text-xl font-label focus:ring-0 appearance-none">
                     <option value="">Select Section</option>
                     {sections.map((code) => (
                       <option key={code} value={code}>
@@ -154,7 +154,7 @@ export default function Home() {
                     className="block font-label text-xs font-bold uppercase tracking-widest text-primary mb-2">Teachers</label>
                   <select
                     name="teacherId"
-                    className="w-full bg-transparent border-0 border-b-2 border-outline-variant focus:ring-0 focus:border-secondary transition-all font-body text-2xl py-2 appearance-none">
+                    className="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-3 text-xl font-label focus:ring-0 appearance-none">
                     <option value="">Select</option>
                     {teachers.map((teacher) => (
                       <option key={teacher.id} value={teacher.id}>

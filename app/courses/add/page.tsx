@@ -13,17 +13,19 @@ export default async function Sections() {
     })
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 relative z-10">
-            <div className="w-full max-w-2xl">
+        <main className="lg:ml-80 pt-24 min-h-screen">
+            <div className="mx-auto px-8 py-20">
                 <div className="mb-8">
-                    <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-300 to-yellow-400 dark:from-blue-600 dark:to-blue-700 bg-clip-text text-transparent mb-2">Add Course</h1>
-                    <p className="text-slate-400 dark:text-slate-600">Create a new academic course</p>
-                </div >
+                    <h1
+                        className="font-headline text-5xl md:text-7xl font-black text-on-background tracking-tighter leading-[0.85] uppercase">
+                        Add New<br /><span className="text-primary">Course</span>
+                    </h1>
+                </div>
 
-                <div className="backdrop-blur-2xl rounded-2xl border border-white/20 dark:border-white/10 p-8 shadow-2xl">
+                <div className="bg-white/10 backdrop-blur-2xl rounded-2xl border border-white/20 dark:border-white/10 p-8 shadow-2xl">
                     < CourseForm teachers={teachers} />
                 </div >
             </div >
-        </div >
+        </main >
     );
 }

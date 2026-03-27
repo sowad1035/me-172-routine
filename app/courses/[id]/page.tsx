@@ -38,80 +38,115 @@ export default async function Sections({ params }: PageProps) {
     }
 
     return (
-        <div className="flex h-screen justify-center items-start pt-10">
-            <div className="w-1/2 p-8 overflow-y-auto">
-                <h1 className="text-2xl font-bold mb-4">View Course Information</h1>
+        <main className="lg:ml-80 pt-24 min-h-screen">
+            <div className="mx-auto px-8 py-20">
+                <div className="mb-8">
+                    <h1
+                        className="font-headline text-5xl md:text-7xl font-black text-on-background tracking-tighter leading-[0.85] uppercase">
+                        View<br /><span className="text-primary">Course Information</span>
+                    </h1>
+                </div>
                 <div className="space-y-4">
-                    <div>
-                        <label className="block mb-2">Title</label>
-                        <input type="text" className="w-full border rounded p-2" value={course.title} readOnly />
-                    </div>
-                    <div className="flex items-center justify-between space-x-4">
-                        <div className="w-1/2">
-                            <label className="block mb-2">Short Code</label>
-                            <input type="text" className="w-full border rounded p-2" value={course.shortCode} readOnly />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+
+                        <div className="relative group col-span-2">
+                            <label
+                                className="font-label text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">
+                                Title</label>
+                            <input
+                                name="title"
+                                className="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-4 text-3xl font-headline tracking-tight focus:ring-0 placeholder:text-stone-300"
+                                value={course.title}
+                                readOnly
+                                type="text" />
                         </div>
-                        <div className="w-1/2">
-                            <label className="block mb-2">Credit Hours</label>
-                            <input type="number" step="0.25" className="w-full border rounded p-2" value={course.creditHours} readOnly />
+                        <div className="relative group">
+                            <label
+                                className="font-label text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Short Code</label>
+                            <input
+                                name="short_code"
+                                className="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-3 text-xl font-label focus:ring-0 placeholder:text-stone-300"
+                                value={course.shortCode}
+                                readOnly
+                                type="text" />
                         </div>
-                    </div>
-                    <div className="space-y-4 bg-red-50 p-4 rounded">
-                        {course.offeredTo.map((_, i) => (
-                            <div key={i} className="space-y-4 bg-red-100 p-4 rounded">
-                                <div className="flex items-center justify-between space-x-4">
-                                    <div className="w-1/2">
-                                        <label className="block mb-2">Department:</label>
-                                        <select disabled className="w-full border rounded p-2">
-                                            <option>{_.department}</option>
-                                        </select>
-                                    </div>
-                                    <div className="w-1/2">
-                                        <label className="block mb-2">Term:</label>
-                                        <select disabled className="w-full border rounded p-2">
-                                            <option>{_.term}</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div>
-                                    {_.offeredToTeachers.map((__, j) => (
-                                        <div key={i + "t" + j} className="mb-4">
-                                            <label className="block mb-2">Teacher {j + 1}:</label>
-                                            <select disabled className="w-full border rounded p-2">
-                                                <option>{__.teacher.name}</option>
-                                            </select>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="flex items-center justify-between space-x-4">
-                        <div className="w-1/2">
-                            <label className="block mb-2">Duration:</label>
-                            <input readOnly type="number" className="w-full border rounded p-2" value={course.duration} />
+                        <div className="relative group">
+                            <label
+                                className="font-label text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Credit Hours</label>
+                            <input
+                                name="credit_hours"
+                                value={course.creditHours}
+                                readOnly
+                                className="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-3 text-xl font-label focus:ring-0 placeholder:text-stone-300"
+                                type="number"
+                                step="0.25"
+                            />
                         </div>
-                        <div className="w-1/2">
-                            <label className="block mb-2">Type:</label>
-                            <select disabled name="type" className="w-full border rounded p-2">
-                                <option >{course.type}</option>
+                        <div className="relative group">
+                            <label
+                                className="font-label text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Duration</label>
+                            <input
+                                name="duration"
+                                className="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-3 text-xl font-label focus:ring-0 placeholder:text-stone-300"
+                                value={course.duration}
+                                readOnly
+                                type="text" />
+                        </div>
+                        <div className="relative group">
+                            <label
+                                className="font-label text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Type</label>
+                            <select
+                                name="type"
+                                value={course.type}
+                                disabled
+                                className="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-3 text-xl font-label focus:ring-0 appearance-none">
+                                <option value="">Select type</option>
+                                <option value="Theory">Theory</option>
+                                <option value="Lab">Lab</option>
+                                <option value="ComputerLab">Computer Lab</option>
                             </select>
                         </div>
+                        <div className="relative group col-span-2 space-y-4 p-4 rounded">
+                            {course.offeredTo.map((_, i) => (
+                                <div key={i} className="space-y-4 p-4 rounded border-2 border-primary border-dashed">
+                                    <div className="flex items-center justify-between space-x-4">
+                                        <div className="w-1/2">
+                                            <label className="font-label text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Department:</label>
+                                            <select disabled className="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-3 text-xl font-label focus:ring-0 appearance-none">
+                                                <option>{_.department}</option>
+                                            </select>
+                                        </div>
+                                        <div className="w-1/2">
+                                            <label className="font-label text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Term:</label>
+                                            <select disabled className="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-3 text-xl font-label focus:ring-0 appearance-none">
+                                                <option>{_.term}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        {_.offeredToTeachers.map((__, j) => (
+                                            <div key={i + "t" + j} className="mb-4">
+                                                <label className="font-label text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Teacher {j + 1}:</label>
+                                                <select disabled className="w-full bg-transparent border-t-0 border-x-0 border-b-2 border-stone-300 py-3 text-xl font-label focus:ring-0 appearance-none">
+                                                    <option>{__.teacher.name}</option>
+                                                </select>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="flex items-center justify-between mt-6">
+                            <Form action={remove}>
+                                <input readOnly value={course.id} name="id" hidden />
+                                <SubmitButton text="Delete" />
+                            </Form>
+                        </div>
+
                     </div>
-                    <div className="flex items-center justify-between mt-6">
-                        <a href="/courses" className="flex items-center bg-gray-500 text-white px-4 py-2 rounded mr-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                            </svg>
-                            <span className="ml-2">Go back</span>
-                        </a>
-                        <Form action={remove}>
-                            <input readOnly value={course.id} name="id" hidden />
-                            <SubmitButton text="Delete" />
-                        </Form>
-                    </div>
-                </div>
-            </div >
-        </div >
+
+                </div >
+            </div>
+        </main >
     );
 }
