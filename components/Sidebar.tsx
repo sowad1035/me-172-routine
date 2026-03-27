@@ -35,11 +35,6 @@ export default function Sidebar() {
                     </div>
                 </div>
                 <div className="flex items-center gap-6">
-                    <div className="w-10 h-10 overflow-hidden">
-                        <img className="w-full h-full object-cover contrast-125"
-                            data-alt="buet logo"
-                            src="./BUET_Logo.svg" />
-                    </div>
                 </div>
             </nav>
             <aside
