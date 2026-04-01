@@ -1,9 +1,8 @@
 "use server"
 
 import prisma from "@/lib/prisma"
-import fs from "fs"
+import { uploadToStorage, downloadFromStorage } from "@/lib/supabase"
 import { redirect } from "next/navigation"
-import path from "path"
 
 /**
  * SPEC-COMPLIANT SCHEDULING SYSTEM
@@ -103,27 +102,21 @@ export async function generate(formData: FormData) {
         deptGroup.set(section.department, arr)
     }
 
+    // IMPORTANT: All sections of the SAME DEPARTMENT should be assigned to the SAME TERM
+    // This ensures they receive the same courses from the same teachers, just at different times
     if (desiredTerm && terms.includes(desiredTerm)) {
         for (const section of sections) {
             sectionTermMap.set(section.id, desiredTerm)
         }
     } else {
+        // Assign each department to a single term (first term by default, or rotate by department)
+        let termIndex = 0
         for (const [department, deptSections] of deptGroup.entries()) {
-            const baseCount = Math.floor(deptSections.length / terms.length)
-            const extra = deptSections.length % terms.length
-            let idx = 0
-
-            for (let t = 0; t < terms.length; t++) {
-                const assignCount = baseCount + (t < extra ? 1 : 0)
-                for (let i = 0; i < assignCount && idx < deptSections.length; i++, idx++) {
-                    sectionTermMap.set(deptSections[idx].id, terms[t])
-                }
+            const assignedTerm = terms[termIndex % terms.length]
+            for (const section of deptSections) {
+                sectionTermMap.set(section.id, assignedTerm)
             }
-            while (idx < deptSections.length) {
-                const t = idx % terms.length
-                sectionTermMap.set(deptSections[idx].id, terms[t])
-                idx++
-            }
+            termIndex++
         }
     }
 
@@ -138,6 +131,19 @@ export async function generate(formData: FormData) {
             }
             coursesByDeptTerm.set(key, list)
         }
+    }
+
+    // DEBUG: Log what courses exist for each dept-term
+    console.log('\n📚 AVAILABLE COURSES BY DEPARTMENT-TERM:')
+    for (const [key, courseList] of coursesByDeptTerm.entries()) {
+        console.log(`  ${key}: ${courseList.map(c => c.shortCode).join(', ')}`)
+    }
+
+    // DEBUG: Log section assignments
+    console.log('\n📍 SECTION ASSIGNMENTS:')
+    for (const section of sections) {
+        const term = sectionTermMap.get(section.id)
+        console.log(`  ${section.code} (${section.department}) → ${term}`)
     }
 
     // SENIORITY-BASED SCHEDULING: Sort teachers by seniority (senior first)
@@ -249,16 +255,47 @@ export async function generate(formData: FormData) {
         return currentLoad + additionalHours <= limit
     }
 
+    // Group sections by department-term for coordinated scheduling
+    const sectionsByDeptTerm = new Map<string, typeof sections>()
+    for (const section of sections) {
+        const sectionTerm = sectionTermMap.get(section.id) ?? terms[0]
+        const key = `${section.department}-${sectionTerm}`
+        const list = sectionsByDeptTerm.get(key) ?? []
+        list.push(section)
+        sectionsByDeptTerm.set(key, list)
+    }
+
+    // If a department has no courses in its assigned term, find which term HAS courses for that department
+    const correctedSectionTermMap = new Map(sectionTermMap)
+    for (const section of sections) {
+        const assignedTerm = sectionTermMap.get(section.id) ?? terms[0]
+        const courseKey = `${section.department}-${assignedTerm}`
+        
+        if (!coursesByDeptTerm.has(courseKey)) {
+            // Find first term that HAS courses for this department
+            const termWithCourses = terms.find(t => coursesByDeptTerm.has(`${section.department}-${t}`))
+            if (termWithCourses) {
+                console.warn(`⚠️ No courses for ${courseKey}, using ${section.department}-${termWithCourses} instead`)
+                correctedSectionTermMap.set(section.id, termWithCourses)
+            }
+        }
+    }
+
     // Main scheduling loop
     const routines: RoutineEntry[] = []
 
     for (const section of sections) {
         const assignments: RoutineEntry["assignments"] = []
         const conflicts: string[] = []
-        const sectionTerm = sectionTermMap.get(section.id) ?? terms[0]
+        const sectionTerm = correctedSectionTermMap.get(section.id) ?? terms[0]
 
         const courseKey = `${section.department}-${sectionTerm}`
         const offeredCourses = coursesByDeptTerm.get(courseKey) ?? []
+
+        if (offeredCourses.length === 0) {
+            console.warn(`⚠️ Section ${section.code} (${courseKey}) has NO courses offered!`)
+            conflicts.push(`No courses offered to ${courseKey}`)
+        }
 
         for (const course of offeredCourses) {
             const duration = Math.max(1, Math.min(3, course.duration || 1))
@@ -373,6 +410,36 @@ export async function generate(formData: FormData) {
         })
     }
 
+    // Verify: Every section in same dept-term should have all offered courses
+    const deptTermSections = new Map<string, typeof routines>()
+    for (const routine of routines) {
+        const deptTermKey = `${routine.department}-${routine.term}`
+        const list = deptTermSections.get(deptTermKey) ?? []
+        list.push(routine)
+        deptTermSections.set(deptTermKey, list)
+    }
+
+    for (const [deptTermKey, deptTermRoutines] of deptTermSections.entries()) {
+        const offeredCoursesForTerm = coursesByDeptTerm.get(deptTermKey) ?? []
+        const offeredCourseIds = new Set(offeredCoursesForTerm.map(c => c.id))
+
+        // Check which courses are missing from each section
+        for (const routine of deptTermRoutines) {
+            const assignedCourseIds = new Set(routine.assignments.map(a => a.courseId))
+            const missingCourses = offeredCoursesForTerm.filter(c => !assignedCourseIds.has(c.id))
+
+            if (missingCourses.length > 0) {
+                if (!routine.conflicts) routine.conflicts = []
+                routine.conflicts.push(
+                    `Missing courses: ${missingCourses.map(c => c.shortCode || c.title).join(', ')}`
+                )
+                console.warn(
+                    `⚠️ Section ${routine.sectionCode} (${deptTermKey}) missing: ${missingCourses.map(c => c.shortCode).join(', ')}`
+                )
+            }
+        }
+    }
+
     // Generate multi-view output
     const output = {
         metadata: {
@@ -397,13 +464,11 @@ export async function generate(formData: FormData) {
         })),
     }
 
-    // Persist output
-    const outPath = path.join(process.cwd(), 'public', 'generated_routines.json')
+    // Persist output to Supabase storage
     try {
-        fs.mkdirSync(path.dirname(outPath), { recursive: true })
-        fs.writeFileSync(outPath, JSON.stringify(output, null, 2), 'utf-8')
+        await uploadToStorage('generated_routines.json', JSON.stringify(output, null, 2), 'application/json')
     } catch (e) {
-        console.error('Failed to write routines file', e)
+        console.error('Failed to write routines file to Supabase storage', e)
     }
 
     console.log(`✅ Scheduling complete. Conflicts: ${allConflicts.length}`)
@@ -589,9 +654,8 @@ export async function downloadAsStudent(formData: FormData) {
         redirect('/')
     }
 
-    const filePath = path.join(process.cwd(), 'public', 'generated_routines.json')
-    if (fs.existsSync(filePath)) {
-        const fileContent = JSON.parse(fs.readFileSync(filePath, 'utf-8')) as GeneratedRoutine
+    try {
+        const fileContent = JSON.parse(await downloadFromStorage('generated_routines.json')) as GeneratedRoutine
 
         const filteredContent = {
             ...fileContent,
@@ -605,16 +669,19 @@ export async function downloadAsStudent(formData: FormData) {
             const routine = filteredContent.sectionTimetables[0]
             const svgImage = generateTimetableImage(routine)
 
-            // Save SVG to public folder
-            const svgPath = path.join(process.cwd(), 'public', `routine_${department}_${section}_${term}.svg`)
-            fs.writeFileSync(svgPath, svgImage, 'utf-8')
+            // Upload SVG to Supabase storage
+            const svgFileName = `routine_${department}_${section}_${term}.svg`
+            await uploadToStorage(svgFileName, svgImage, 'image/svg+xml')
 
-            console.log(`✅ Timetable image generated: ${svgPath}`)
+            console.log(`✅ Timetable image generated: ${svgFileName}`)
         }
-
-        console.log('Generated routine file content:', filteredContent)
         redirect(`/timetable?dept=${department}&section=${section}&term=${term}`)
-    } else {
+    } catch (error) {
+        // Rethrow Next.js redirect errors so they propagate properly
+        if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
+            throw error
+        }
+        console.error('Error in downloadAsStudent:', error)
         throw new Error('Generated routine file not found. Please run the generator first.')
     }
 }
@@ -627,47 +694,57 @@ export async function downloadAsTeacher(formData: FormData) {
         redirect('/')
     }
 
-    const filePath = path.join(process.cwd(), 'public', 'generated_routines.json')
+    try {
+        const fileContent = JSON.parse(await downloadFromStorage('generated_routines.json')) as GeneratedRoutine
 
-    if (!fs.existsSync(filePath)) {
-        throw new Error('Generated routine file not found. Please run the generator first.')
-    }
+        // Find teacher name from teacherId
+        const teacher = fileContent.teacherLoads.find(t => t.teacherId === teacherId)
+        if (!teacher) {
+            redirect('/')
+        }
 
-    const fileContent = JSON.parse(fs.readFileSync(filePath, 'utf-8')) as GeneratedRoutine
+        // Create a synthetic routine entry for the teacher showing all their assignments
+        const teacherRoutine: RoutineEntry = {
+            sectionId: teacherId,
+            sectionCode: teacher.teacherName || teacherId,
+            department: 'All',
+            term: 'All',
+            assignments: [],
+            conflicts: undefined,
+        }
 
-    // Find teacher name from teacherId
-    const teacher = fileContent.teacherLoads.find(t => t.teacherId === teacherId)
-    if (!teacher) {
-        redirect('/')
-    }
-
-    // Create a synthetic routine entry for the teacher showing all their assignments
-    const teacherRoutine: RoutineEntry = {
-        sectionId: teacherId,
-        sectionCode: teacher.teacherName || teacherId,
-        department: 'All',
-        term: 'All',
-        assignments: [],
-        conflicts: undefined,
-    }
-
-    // Collect all assignments for this teacher
-    for (const section of fileContent.sectionTimetables) {
-        for (const assignment of section.assignments) {
-            if (assignment.teacherId === teacherId) {
-                teacherRoutine.assignments.push(assignment)
+        // Collect all assignments for this teacher
+        for (const section of fileContent.sectionTimetables) {
+            for (const assignment of section.assignments) {
+                if (assignment.teacherId === teacherId) {
+                    teacherRoutine.assignments.push(assignment)
+                }
             }
         }
+
+        // Generate teacher timetable image
+        const svgImage = generateTeacherTimetableImage(teacherRoutine, teacher.teacherName || teacherId)
+
+        // Upload SVG to Supabase storage
+        const svgFileName = `teacher_${teacherId}_timetable.svg`
+        await uploadToStorage(svgFileName, svgImage, 'image/svg+xml')
+
+        console.log(`✅ Teacher timetable generated: ${svgFileName}`)
+
+        redirect(`/teacher-timetable?teacherId=${teacherId}&name=${encodeURIComponent(teacher.teacherName || 'Unknown')}`)
+    } catch (error) {
+        // Rethrow Next.js redirect errors so they propagate properly
+        if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
+            throw error
+        }
+        console.error('Error in downloadAsTeacher:', error)
+        throw new Error('Generated routine file not found. Please run the generator first.')
     }
+}
 
-    // Generate teacher timetable image
-    const svgImage = generateTeacherTimetableImage(teacherRoutine, teacher.teacherName || teacherId)
+export async function testUpload() {
+    'use server'
+    const testContent = `This is a test file uploaded at ${new Date().toISOString()}`
+    return uploadToStorage('test_upload.txt', testContent, 'text/plain')
 
-    // Save SVG to public folder
-    const svgPath = path.join(process.cwd(), 'public', `teacher_${teacherId}_timetable.svg`)
-    fs.writeFileSync(svgPath, svgImage, 'utf-8')
-
-    console.log(`✅ Teacher timetable generated: ${svgPath}`)
-
-    redirect(`/teacher-timetable?teacherId=${teacherId}&name=${encodeURIComponent(teacher.teacherName || 'Unknown')}`)
 }

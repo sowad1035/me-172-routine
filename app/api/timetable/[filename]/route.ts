@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { downloadFromStorage } from "@/lib/supabase";
 
 export async function GET(
     request: NextRequest,
@@ -17,21 +16,11 @@ export async function GET(
             );
         }
 
-        const filePath = path.join(process.cwd(), "public", filename);
-
-        // Verify file exists
-        if (!fs.existsSync(filePath)) {
-            return NextResponse.json(
-                { error: "File not found" },
-                { status: 404 }
-            );
-        }
-
-        // Read file content
-        const svgContent = fs.readFileSync(filePath, "utf-8");
+        // Download SVG from Supabase storage
+        const svgContent = await downloadFromStorage(filename);
 
         // Return SVG with proper content type
-        console.log({ filePath, svgContent })
+        console.log({ filename, contentLength: svgContent.length })
         return new NextResponse(svgContent, {
             headers: {
                 "Content-Type": "image/svg+xml",
