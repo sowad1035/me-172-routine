@@ -69,14 +69,42 @@ const TEACHER_LOAD_LIMITS: TeacherLoadLimits = {
 }
 
 export async function generate(formData: FormData) {
-    const desiredTerm = "";
+    const DAYS = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday']
+    const MORNING_HOURS = [8, 9, 10, 11, 12] // Theory courses: 8am-1pm (before break)
+    const AFTERNOON_HOURS = [14, 15, 16] // Seasonal courses: 2pm-5pm (after break at 1-2pm)
+    const BREAK_HOUR = 13 // Break from 1-2pm
+    const TERMS = ['L1_T1', 'L1_T2', 'L2_T1', 'L2_T2', 'L3_T1', 'L3_T2', 'L4_T1', 'L4_T2']
+    const MAX_RETRIES = 5
 
-    const days = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday']
-    const allHours = Array.from({ length: 9 }, (_, i) => i + 8) // 8-16
-    const beforeBreak = [8, 9, 10, 11, 12]
-    const afterBreak = [14, 15, 16]
-    const terms = ['L1_T1', 'L1_T2', 'L2_T1', 'L2_T2', 'L3_T1', 'L3_T2', 'L4_T1', 'L4_T2']
+    type ScheduleEntry = {
+        courseId: string
+        courseTitle: string
+        courseCode: string
+        teacherId: string
+        teacherName: string
+        classroomId: string
+        classroomCode: string
+        day: string
+        startHour: number
+        duration: number
+    }
 
+    type ScheduleState = {
+        teacherBusy: Map<string, Map<string, Set<number>>>
+        classroomBusy: Map<string, Map<string, Set<number>>>
+        sectionBusy: Map<string, Map<string, Set<number>>>
+        teacherLoad: Map<string, number>
+        unplacedCourses: Array<{
+            sectionId: string
+            sectionCode: string
+            courseId: string
+            courseCode: string
+            reason: string
+        }>
+    }
+
+    // Fetch all data
+    console.log('\n📥 Fetching data from database...')
     const [sections, courses, classrooms, teachers] = await Promise.all([
         prisma.section.findMany({ include: { homeClassroom: true } }),
         prisma.course.findMany({
@@ -92,100 +120,84 @@ export async function generate(formData: FormData) {
         prisma.teacher.findMany(),
     ])
 
-    // Map sections to terms
-    const sectionTermMap = new Map<string, string>()
-    const deptGroup = new Map<string, typeof sections>()
+    console.log(`   ✓ ${sections.length} sections, ${courses.length} courses, ${teachers.length} teachers, ${classrooms.length} classrooms`)
 
+    // Step 1: Group sections by department and identify available terms for each
+    console.log('\n📍 Organizing sections by department...')
+    const sectionsByDept = new Map<string, typeof sections>()
     for (const section of sections) {
-        const arr = deptGroup.get(section.department) ?? []
-        arr.push(section)
-        deptGroup.set(section.department, arr)
+        if (!sectionsByDept.has(section.department)) {
+            sectionsByDept.set(section.department, [])
+        }
+        sectionsByDept.get(section.department)!.push(section)
     }
 
-    // IMPORTANT: All sections of the SAME DEPARTMENT should be assigned to the SAME TERM
-    // This ensures they receive the same courses from the same teachers, just at different times
-    if (desiredTerm && terms.includes(desiredTerm)) {
-        for (const section of sections) {
-            sectionTermMap.set(section.id, desiredTerm)
-        }
-    } else {
-        // Assign each department to a single term (first term by default, or rotate by department)
-        let termIndex = 0
-        for (const [department, deptSections] of deptGroup.entries()) {
-            const assignedTerm = terms[termIndex % terms.length]
-            for (const section of deptSections) {
-                sectionTermMap.set(section.id, assignedTerm)
-            }
-            termIndex++
-        }
-    }
-
-    // Build courses by department-term
+    // Step 2: Build courses by department-term and assign terms to departments
+    console.log('\n📚 Building course map by department-term...')
     const coursesByDeptTerm = new Map<string, typeof courses>()
+    const availableTermsByDept = new Map<string, string[]>()
+
     for (const course of courses) {
         for (const offer of course.offeredTo) {
             const key = `${offer.department}-${offer.term}`
             const list = coursesByDeptTerm.get(key) ?? []
-            if (!list.includes(course)) {
+            if (!list.find(c => c.id === course.id)) {
                 list.push(course)
             }
             coursesByDeptTerm.set(key, list)
+
+            // Track available terms per department
+            if (!availableTermsByDept.has(offer.department)) {
+                availableTermsByDept.set(offer.department, [])
+            }
+            const terms = availableTermsByDept.get(offer.department)!
+            if (!terms.includes(offer.term)) {
+                terms.push(offer.term)
+            }
         }
     }
 
-    // DEBUG: Log what courses exist for each dept-term
-    console.log('\n📚 AVAILABLE COURSES BY DEPARTMENT-TERM:')
-    for (const [key, courseList] of coursesByDeptTerm.entries()) {
-        console.log(`  ${key}: ${courseList.map(c => c.shortCode).join(', ')}`)
+    // Assign each department to a term
+    const deptTermAssignment = new Map<string, string>()
+    let termIdx = 0
+    for (const [dept, secs] of sectionsByDept.entries()) {
+        const availableTerms = availableTermsByDept.get(dept) ?? []
+        if (availableTerms.length > 0) {
+            deptTermAssignment.set(dept, availableTerms[0]) // Use first available term
+        } else {
+            deptTermAssignment.set(dept, TERMS[termIdx % TERMS.length])
+        }
+        termIdx++
     }
 
-    // DEBUG: Log section assignments
-    console.log('\n📍 SECTION ASSIGNMENTS:')
-    for (const section of sections) {
-        const term = sectionTermMap.get(section.id)
-        console.log(`  ${section.code} (${section.department}) → ${term}`)
+    console.log('   Department → Term assignments:')
+    for (const [dept, term] of deptTermAssignment.entries()) {
+        console.log(`   ${dept} → ${term}`)
     }
 
-    // SENIORITY-BASED SCHEDULING: Sort teachers by seniority (senior first)
-    const teachersBySeniority = [...teachers].sort((a, b) => {
-        const rankA = SENIORITY_RANK[a.seniority] ?? 0
-        const rankB = SENIORITY_RANK[b.seniority] ?? 0
-        return rankB - rankA // descending (senior first)
-    })
-
-    // Track busy slots and load per teacher
-    const teacherBusy: Map<string, Map<string, Set<number>>> = new Map()
-    const classroomBusy: Map<string, Map<string, Set<number>>> = new Map()
-    const sectionSchedule: Map<string, Map<string, Set<number>>> = new Map()
-    const teacherWeeklyLoad: Map<string, number> = new Map()
-    const allConflicts: Conflict[] = []
-
-    // Helper: Check if a time slot is available
+    // Step 3: Helper functions
     const isSlotAvailable = (
-        teacherId: string | undefined,
-        classroomId: string | undefined,
+        state: ScheduleState,
+        teacherId: string,
+        classroomId: string,
         sectionId: string,
         day: string,
         hours: number[]
     ): boolean => {
-        // Check teacher conflicts
-        if (teacherId) {
-            const teacherDaySet = teacherBusy.get(teacherId)?.get(day)
-            if (teacherDaySet && hours.some(h => teacherDaySet.has(h))) {
-                return false
-            }
+        // Check teacher availability
+        const teacherDaySet = state.teacherBusy.get(teacherId)?.get(day)
+        if (teacherDaySet && hours.some(h => teacherDaySet.has(h))) {
+            return false
         }
 
-        // Check classroom conflicts
-        if (classroomId) {
-            const classroomDaySet = classroomBusy.get(classroomId)?.get(day)
-            if (classroomDaySet && hours.some(h => classroomDaySet.has(h))) {
-                return false
-            }
+        // Check classroom availability
+        const classroomDaySet = state.classroomBusy.get(classroomId)?.get(day)
+        if (classroomDaySet && hours.some(h => classroomDaySet.has(h))) {
+            return false
         }
 
-        // Check section conflicts
-        const sectionDaySet = sectionSchedule.get(sectionId)?.get(day)
+        // Check section availability
+        const sectionDaySet = state.sectionBusy.get(sectionId)?.get(day)
         if (sectionDaySet && hours.some(h => sectionDaySet.has(h))) {
             return false
         }
@@ -193,301 +205,377 @@ export async function generate(formData: FormData) {
         return true
     }
 
-    // Helper: Book a slot
     const bookSlot = (
-        teacherId: string | undefined,
-        classroomId: string | undefined,
+        state: ScheduleState,
+        teacherId: string,
+        classroomId: string,
         sectionId: string,
         day: string,
         hours: number[],
         duration: number
     ) => {
-        if (teacherId) {
-            const dayMap = teacherBusy.get(teacherId) ?? new Map<string, Set<number>>()
-            const hourSet = dayMap.get(day) ?? new Set<number>()
-            hours.forEach(h => hourSet.add(h))
-            dayMap.set(day, hourSet)
-            teacherBusy.set(teacherId, dayMap)
-
-            // Track load
-            const currentLoad = teacherWeeklyLoad.get(teacherId) ?? 0
-            teacherWeeklyLoad.set(teacherId, currentLoad + duration)
+        // Book teacher
+        let teacherDayMap = state.teacherBusy.get(teacherId)
+        if (!teacherDayMap) {
+            teacherDayMap = new Map()
+            state.teacherBusy.set(teacherId, teacherDayMap)
         }
-
-        if (classroomId) {
-            const dayMap = classroomBusy.get(classroomId) ?? new Map<string, Set<number>>()
-            const hourSet = dayMap.get(day) ?? new Set<number>()
-            hours.forEach(h => hourSet.add(h))
-            dayMap.set(day, hourSet)
-            classroomBusy.set(classroomId, dayMap)
+        let teacherHourSet = teacherDayMap.get(day)
+        if (!teacherHourSet) {
+            teacherHourSet = new Set()
+            teacherDayMap.set(day, teacherHourSet)
         }
+        hours.forEach(h => teacherHourSet.add(h))
 
-        const dayMap = sectionSchedule.get(sectionId) ?? new Map<string, Set<number>>()
-        const hourSet = dayMap.get(day) ?? new Set<number>()
-        hours.forEach(h => hourSet.add(h))
-        dayMap.set(day, hourSet)
-        sectionSchedule.set(sectionId, dayMap)
+        // Book classroom
+        let classroomDayMap = state.classroomBusy.get(classroomId)
+        if (!classroomDayMap) {
+            classroomDayMap = new Map()
+            state.classroomBusy.set(classroomId, classroomDayMap)
+        }
+        let classroomHourSet = classroomDayMap.get(day)
+        if (!classroomHourSet) {
+            classroomHourSet = new Set()
+            classroomDayMap.set(day, classroomHourSet)
+        }
+        hours.forEach(h => classroomHourSet.add(h))
+
+        // Book section
+        let sectionDayMap = state.sectionBusy.get(sectionId)
+        if (!sectionDayMap) {
+            sectionDayMap = new Map()
+            state.sectionBusy.set(sectionId, sectionDayMap)
+        }
+        let sectionHourSet = sectionDayMap.get(day)
+        if (!sectionHourSet) {
+            sectionHourSet = new Set()
+            sectionDayMap.set(day, sectionHourSet)
+        }
+        hours.forEach(h => sectionHourSet.add(h))
+
+        // Update teacher load
+        const currentLoad = state.teacherLoad.get(teacherId) ?? 0
+        state.teacherLoad.set(teacherId, currentLoad + duration)
     }
 
-    // Helper: Find best classroom
-    const selectClassroom = (section: typeof sections[0], course: typeof courses[0]) => {
-        // For labs/computer labs, prefer matching type
-        if (course.type === 'Lab' || course.type === 'ComputerLab') {
-            const typeMatch = classrooms.find(
-                c => c.capacity >= section.numberOfStudents && c.type === course.type
-            )
-            if (typeMatch) return typeMatch
-        }
+    const canAssignTeacher = (state: ScheduleState, teacherId: string, additionalHours: number): boolean => {
+        const teacher = teachers.find(t => t.id === teacherId)
+        if (!teacher) return false
 
-        // Fall back to home classroom or any with capacity
-        if (section.homeClassroom && section.homeClassroom.capacity >= section.numberOfStudents) {
-            return section.homeClassroom
-        }
-
-        return classrooms.find(c => c.capacity >= section.numberOfStudents)
-    }
-
-    // Helper: Assign teacher with load checking
-    const canAssignTeacher = (teacherId: string, additionalHours: number): boolean => {
-        const seniority = teachers.find(t => t.id === teacherId)?.seniority || 'Lecturer'
-        const limit = TEACHER_LOAD_LIMITS[seniority as keyof TeacherLoadLimits] || 25
-        const currentLoad = teacherWeeklyLoad.get(teacherId) ?? 0
+        const seniority = teacher.seniority
+        const limit = TEACHER_LOAD_LIMITS[seniority as keyof TeacherLoadLimits] ?? 25
+        const currentLoad = state.teacherLoad.get(teacherId) ?? 0
         return currentLoad + additionalHours <= limit
     }
 
-    // Group sections by department-term for coordinated scheduling
-    const sectionsByDeptTerm = new Map<string, typeof sections>()
-    for (const section of sections) {
-        const sectionTerm = sectionTermMap.get(section.id) ?? terms[0]
-        const key = `${section.department}-${sectionTerm}`
-        const list = sectionsByDeptTerm.get(key) ?? []
-        list.push(section)
-        sectionsByDeptTerm.set(key, list)
+    const selectClassroom = (section: typeof sections[0], course: typeof courses[0]): typeof classrooms[0] | null => {
+        // For labs, prefer matching type
+        if (course.type === 'Lab' || course.type === 'ComputerLab') {
+            const match = classrooms.find(
+                c => c.capacity >= section.numberOfStudents && c.type === course.type
+            )
+            if (match) return match
+        }
+
+        // Try home classroom
+        if (section.homeClassroom?.capacity >= section.numberOfStudents) {
+            return section.homeClassroom
+        }
+
+        // Find any available classroom with capacity
+        return classrooms.find(c => c.capacity >= section.numberOfStudents) ?? null
     }
 
-    // If a department has no courses in its assigned term, find which term HAS courses for that department
-    const correctedSectionTermMap = new Map(sectionTermMap)
-    for (const section of sections) {
-        const assignedTerm = sectionTermMap.get(section.id) ?? terms[0]
-        const courseKey = `${section.department}-${assignedTerm}`
-        
-        if (!coursesByDeptTerm.has(courseKey)) {
-            // Find first term that HAS courses for this department
-            const termWithCourses = terms.find(t => coursesByDeptTerm.has(`${section.department}-${t}`))
-            if (termWithCourses) {
-                console.warn(`⚠️ No courses for ${courseKey}, using ${section.department}-${termWithCourses} instead`)
-                correctedSectionTermMap.set(section.id, termWithCourses)
-            }
-        }
+    // Helper: Get daily load for a section to enable load balancing
+    const getDayLoadForSection = (state: ScheduleState, sectionId: string, day: string): number => {
+        const daySet = state.sectionBusy.get(sectionId)?.get(day)
+        return daySet ? daySet.size : 0
     }
 
-    // Main scheduling loop
-    const routines: RoutineEntry[] = []
-
-    for (const section of sections) {
-        const assignments: RoutineEntry["assignments"] = []
-        const conflicts: string[] = []
-        const sectionTerm = correctedSectionTermMap.get(section.id) ?? terms[0]
-
-        const courseKey = `${section.department}-${sectionTerm}`
-        const offeredCourses = coursesByDeptTerm.get(courseKey) ?? []
-
-        if (offeredCourses.length === 0) {
-            console.warn(`⚠️ Section ${section.code} (${courseKey}) has NO courses offered!`)
-            conflicts.push(`No courses offered to ${courseKey}`)
-        }
-
-        for (const course of offeredCourses) {
-            const duration = Math.max(1, Math.min(3, course.duration || 1))
-            const numSessions = course.type === 'Lab' ? 1 : Math.ceil(course.creditHours)
-
-            // Get offered teachers
-            const offered = course.offeredTo.find(o => o.department === section.department)
-            const offeredTeachers = offered?.offeredToTeachers || []
-
-            // Sort offered teachers by seniority (senior first for priority slots)
-            const sortedTeachers = [...offeredTeachers].sort((a, b) => {
-                const rankA = SENIORITY_RANK[a.teacher.seniority] ?? 0
-                const rankB = SENIORITY_RANK[b.teacher.seniority] ?? 0
-                return rankB - rankA
-            })
-
-            for (let session = 0; session < numSessions; session++) {
-                // Cycle through sorted teachers for theory; use first for lab
-                const teacherIndex = course.type === 'Lab' ? 0 : session % sortedTeachers.length
-                const teacherRecord = sortedTeachers[teacherIndex]?.teacher
-
-                // Validate teacher load
-                if (teacherRecord && !canAssignTeacher(teacherRecord.id, duration)) {
-                    conflicts.push(
-                        `Teacher ${teacherRecord.name} exceeds load limit for session ${session + 1} of ${course.title}`
-                    )
-                    continue
-                }
-
-                // Select classroom
-                const classroom = selectClassroom(section, course)
-
-                // Capacity check
-                if (!classroom || classroom.capacity < section.numberOfStudents) {
-                    conflicts.push(
-                        `Insufficient classroom capacity for section ${section.code} in course ${course.title}`
-                    )
-                    allConflicts.push({
-                        type: 'capacity',
-                        description: `Section ${section.code} needs ${section.numberOfStudents} seats; best available has ${classroom?.capacity || 0}`,
-                    })
-                    continue
-                }
-
-                // Determine time slots
-                // Sessional courses (lab, computer lab) can use any time to resolve conflicts
-                const availableSlots = (course.type === 'Lab' || course.type === 'ComputerLab')
-                    ? [...beforeBreak, ...afterBreak]  // Full day availability for sessional courses
-                    : beforeBreak  // Theory courses only in morning
-
-                let placed = false
-
-                // Try to find available slot
-                for (const day of days) {
-                    for (let startIdx = 0; startIdx <= availableSlots.length - duration; startIdx++) {
-                        const startHour = availableSlots[startIdx]
-                        const needed = Array.from({ length: duration }, (_, i) => startHour + i)
-
-                        if (isSlotAvailable(teacherRecord?.id, classroom.id, section.id, day, needed)) {
-                            // Book slot
-                            bookSlot(teacherRecord?.id, classroom.id, section.id, day, needed, duration)
-
-                            assignments.push({
-                                courseId: course.id,
-                                courseTitle: course.title,
-                                courseCode: course.shortCode || course.title,
-                                teacherId: teacherRecord?.id,
-                                teacherName: teacherRecord?.name,
-                                classroomId: classroom.id,
-                                classroomCode: classroom.code,
-                                day,
-                                startHour,
-                                duration,
-                            })
-
-                            placed = true
-                            break
-                        }
-                    }
-
-                    if (placed) break
-                }
-
-                if (!placed) {
-                    conflicts.push(
-                        `Could not place session ${session + 1} of course ${course.shortCode || course.title} for section ${section.code}`
-                    )
-                    assignments.push({
-                        courseId: course.id,
-                        courseTitle: course.title,
-                        courseCode: course.shortCode || course.title,
-                        day: '',
-                        startHour: -1,
-                        duration,
-                        note: `unplaced session ${session + 1}`,
-                    })
-                    allConflicts.push({
-                        type: 'section',
-                        description: conflicts[conflicts.length - 1],
-                    })
-                }
-            }
-        }
-
-        routines.push({
-            sectionId: section.id,
-            sectionCode: section.code,
-            department: section.department,
-            term: sectionTerm,
-            assignments,
-            conflicts: conflicts.length ? conflicts : undefined,
+    // Helper: Sort days by load (ascending) to balance student workload
+    const getDaysSortedByLoad = (state: ScheduleState, sectionId: string): string[] => {
+        return [...DAYS].sort((dayA, dayB) => {
+            const loadA = getDayLoadForSection(state, sectionId, dayA)
+            const loadB = getDayLoadForSection(state, sectionId, dayB)
+            return loadA - loadB // Prefer days with fewer classes
         })
     }
 
-    // Verify: Every section in same dept-term should have all offered courses
-    const deptTermSections = new Map<string, typeof routines>()
-    for (const routine of routines) {
-        const deptTermKey = `${routine.department}-${routine.term}`
-        const list = deptTermSections.get(deptTermKey) ?? []
-        list.push(routine)
-        deptTermSections.set(deptTermKey, list)
+    // Step 4: Main scheduling function
+    const scheduleAllCourses = (): { routines: RoutineEntry[]; totalUnplaced: number } => {
+        const state: ScheduleState = {
+            teacherBusy: new Map(),
+            classroomBusy: new Map(),
+            sectionBusy: new Map(),
+            teacherLoad: new Map(),
+            unplacedCourses: [],
+        }
+
+        const routines: RoutineEntry[] = []
+
+        for (const section of sections) {
+            const dept = section.department
+            const term = deptTermAssignment.get(dept) ?? TERMS[0]
+            const courseKey = `${dept}-${term}`
+            const offeredCourses = coursesByDeptTerm.get(courseKey) ?? []
+
+            const assignments: ScheduleEntry[] = []
+            const conflicts: string[] = []
+
+            for (const course of offeredCourses) {
+                const duration = course.duration ?? 1
+                const numSessions = course.type === 'Lab' || course.type === 'ComputerLab' ? 1 : Math.ceil(course.creditHours)
+
+                // Get teachers for this course in this department
+                const offerRecord = course.offeredTo.find(o => o.department === dept && o.term === term)
+                const offeredTeachers = offerRecord?.offeredToTeachers ?? []
+
+                if (offeredTeachers.length === 0) {
+                    conflicts.push(`No teachers assigned to ${course.shortCode}`)
+                    state.unplacedCourses.push({
+                        sectionId: section.id,
+                        sectionCode: section.code,
+                        courseId: course.id,
+                        courseCode: course.shortCode,
+                        reason: 'No teachers assigned',
+                    })
+                    continue
+                }
+
+                // Sort teachers by seniority
+                const sortedTeachers = [...offeredTeachers].sort((a, b) => {
+                    const rankA = SENIORITY_RANK[a.teacher.seniority] ?? 0
+                    const rankB = SENIORITY_RANK[b.teacher.seniority] ?? 0
+                    return rankB - rankA
+                })
+
+                // Try to schedule each session
+                for (let session = 0; session < numSessions; session++) {
+                    // For labs, use first teacher; for theory, cycle through teachers
+                    const teacherIdx = (course.type === 'Lab' || course.type === 'ComputerLab') ? 0 : session % sortedTeachers.length
+                    const teacherObj = sortedTeachers[teacherIdx]?.teacher
+
+                    if (!teacherObj) {
+                        conflicts.push(`No teacher available for session ${session + 1} of ${course.shortCode}`)
+                        state.unplacedCourses.push({
+                            sectionId: section.id,
+                            sectionCode: section.code,
+                            courseId: course.id,
+                            courseCode: course.shortCode,
+                            reason: `No teacher for session ${session + 1}`,
+                        })
+                        continue
+                    }
+
+                    // Check teacher load
+                    if (!canAssignTeacher(state, teacherObj.id, duration)) {
+                        conflicts.push(`Teacher ${teacherObj.name} load exceeded for ${course.shortCode} session ${session + 1}`)
+                        state.unplacedCourses.push({
+                            sectionId: section.id,
+                            sectionCode: section.code,
+                            courseId: course.id,
+                            courseCode: course.shortCode,
+                            reason: `Teacher ${teacherObj.name} load exceeded`,
+                        })
+                        continue
+                    }
+
+                    // Select classroom
+                    const classroom = selectClassroom(section, course)
+                    if (!classroom) {
+                        conflicts.push(`No classroom with capacity ${section.numberOfStudents} for ${course.shortCode}`)
+                        state.unplacedCourses.push({
+                            sectionId: section.id,
+                            sectionCode: section.code,
+                            courseId: course.id,
+                            courseCode: course.shortCode,
+                            reason: 'No suitable classroom',
+                        })
+                        continue
+                    }
+
+                    // Determine preferred time slots
+                    const isSessional = course.type === 'Lab' || course.type === 'ComputerLab'
+                    const preferredHours = isSessional ? AFTERNOON_HOURS : MORNING_HOURS
+
+                    let placed = false
+
+                    // Get days sorted by current load for balanced distribution
+                    const sortedDays = getDaysSortedByLoad(state, section.id)
+
+                    // Try preferred hours first on load-balanced days
+                    outerLoop: for (const day of sortedDays) {
+                        for (let startIdx = 0; startIdx <= preferredHours.length - duration; startIdx++) {
+                            const startHour = preferredHours[startIdx]
+                            const neededHours = Array.from({ length: duration }, (_, i) => startHour + i)
+
+                            if (isSlotAvailable(state, teacherObj.id, classroom.id, section.id, day, neededHours)) {
+                                bookSlot(state, teacherObj.id, classroom.id, section.id, day, neededHours, duration)
+                                assignments.push({
+                                    courseId: course.id,
+                                    courseTitle: course.title,
+                                    courseCode: course.shortCode,
+                                    teacherId: teacherObj.id,
+                                    teacherName: teacherObj.name,
+                                    classroomId: classroom.id,
+                                    classroomCode: classroom.code,
+                                    day,
+                                    startHour,
+                                    duration,
+                                })
+                                placed = true
+                                break outerLoop
+                            }
+                        }
+                    }
+
+                    // If not placed in preferred hours and it's a sessional course, try morning hours on load-balanced days
+                    if (!placed && isSessional) {
+                        outerLoop2: for (const day of sortedDays) {
+                            for (let startIdx = 0; startIdx <= MORNING_HOURS.length - duration; startIdx++) {
+                                const startHour = MORNING_HOURS[startIdx]
+                                const neededHours = Array.from({ length: duration }, (_, i) => startHour + i)
+
+                                if (isSlotAvailable(state, teacherObj.id, classroom.id, section.id, day, neededHours)) {
+                                    bookSlot(state, teacherObj.id, classroom.id, section.id, day, neededHours, duration)
+                                    assignments.push({
+                                        courseId: course.id,
+                                        courseTitle: course.title,
+                                        courseCode: course.shortCode,
+                                        teacherId: teacherObj.id,
+                                        teacherName: teacherObj.name,
+                                        classroomId: classroom.id,
+                                        classroomCode: classroom.code,
+                                        day,
+                                        startHour,
+                                        duration,
+                                    })
+                                    placed = true
+                                    break outerLoop2
+                                }
+                            }
+                        }
+                    }
+
+                    if (!placed) {
+                        conflicts.push(`Could not schedule ${course.shortCode} session ${session + 1}`)
+                        state.unplacedCourses.push({
+                            sectionId: section.id,
+                            sectionCode: section.code,
+                            courseId: course.id,
+                            courseCode: course.shortCode,
+                            reason: `Session ${session + 1} not placed`,
+                        })
+                    }
+                }
+            }
+
+            routines.push({
+                sectionId: section.id,
+                sectionCode: section.code,
+                department: dept,
+                term,
+                assignments: assignments as any,
+                conflicts: conflicts.length > 0 ? conflicts : undefined,
+            })
+        }
+
+        return { routines, totalUnplaced: state.unplacedCourses.length }
     }
 
-    for (const [deptTermKey, deptTermRoutines] of deptTermSections.entries()) {
-        const offeredCoursesForTerm = coursesByDeptTerm.get(deptTermKey) ?? []
-        const offeredCourseIds = new Set(offeredCoursesForTerm.map(c => c.id))
+    // Step 5: Run scheduling with retries
+    console.log('\n🔄 Starting scheduling with conflict resolution...')
+    let bestResult = scheduleAllCourses()
+    let attempt = 1
 
-        // Check which courses are missing from each section
-        for (const routine of deptTermRoutines) {
-            const assignedCourseIds = new Set(routine.assignments.map(a => a.courseId))
-            const missingCourses = offeredCoursesForTerm.filter(c => !assignedCourseIds.has(c.id))
+    while (bestResult.totalUnplaced > 0 && attempt < MAX_RETRIES) {
+        console.log(`   Attempt ${attempt}: ${bestResult.totalUnplaced} unplaced courses`)
+        attempt++
+        const result = scheduleAllCourses()
+        if (result.totalUnplaced < bestResult.totalUnplaced) {
+            bestResult = result
+        }
+    }
 
-            if (missingCourses.length > 0) {
-                if (!routine.conflicts) routine.conflicts = []
-                routine.conflicts.push(
-                    `Missing courses: ${missingCourses.map(c => c.shortCode || c.title).join(', ')}`
-                )
-                console.warn(
-                    `⚠️ Section ${routine.sectionCode} (${deptTermKey}) missing: ${missingCourses.map(c => c.shortCode).join(', ')}`
-                )
+    const routines = bestResult.routines
+
+    console.log(`\n✅ Scheduling complete after ${attempt} attempts`)
+    console.log(`   Total routines generated: ${routines.length}`)
+    console.log(`   Unplaced courses: ${bestResult.totalUnplaced}`)
+
+    // Display load distribution per section
+    console.log('\n📊 LOAD DISTRIBUTION (classes per day per section):')
+    for (const routine of routines) {
+        const dayLoads: Record<string, number> = {}
+        DAYS.forEach(day => dayLoads[day] = 0)
+
+        for (const assignment of routine.assignments) {
+            dayLoads[assignment.day]++
+        }
+
+        const loadStr = DAYS.map(day => `${day.substring(0, 3)}: ${dayLoads[day]}`).join(' | ')
+        console.log(`   ${routine.sectionCode}: ${loadStr}`)
+    }
+
+    // Step 6: Generate output
+    const teacherLoadsMap = new Map<string, number>()
+    for (const routine of routines) {
+        for (const assignment of routine.assignments) {
+            if (assignment.teacherId) {
+                const load = teacherLoadsMap.get(assignment.teacherId) ?? 0
+                teacherLoadsMap.set(assignment.teacherId, load + assignment.duration)
             }
         }
     }
 
-    // Generate multi-view output
+    const teacherLoads = Array.from(teacherLoadsMap.entries()).map(([teacherId, load]) => {
+        const teacher = teachers.find(t => t.id === teacherId)
+        return {
+            teacherId,
+            teacherName: teacher?.name,
+            weeklyLoadHours: load,
+            seniority: teacher?.seniority,
+            limit: TEACHER_LOAD_LIMITS[teacher?.seniority as keyof TeacherLoadLimits] ?? 25,
+        }
+    })
+
     const output = {
         metadata: {
             generatedAt: new Date().toISOString(),
+            schedulingAttempts: attempt,
             totalSections: sections.length,
             totalCourses: courses.length,
             totalTeachers: teachers.length,
             totalClassrooms: classrooms.length,
-            unplacedSessions: allConflicts.filter(c => c.type === 'section').length,
-            capacityIssues: allConflicts.filter(c => c.type === 'capacity').length,
+            unplacedCourses: bestResult.totalUnplaced,
         },
         sectionTimetables: routines,
-        conflicts: allConflicts,
-        teacherLoads: Array.from(teacherWeeklyLoad.entries()).map(([teacherId, load]) => ({
-            teacherId,
-            teacherName: teachers.find(t => t.id === teacherId)?.name,
-            weeklyLoadHours: load,
-            seniority: teachers.find(t => t.id === teacherId)?.seniority,
-            limit: TEACHER_LOAD_LIMITS[
-                (teachers.find(t => t.id === teacherId)?.seniority as keyof TeacherLoadLimits) || 'Lecturer'
-            ],
-        })),
+        teacherLoads,
     }
 
-    // Persist output to Supabase storage
+    // Step 7: Persist to storage
     try {
         await uploadToStorage('generated_routines.json', JSON.stringify(output, null, 2), 'application/json')
+        console.log('   ✓ Saved to Supabase storage')
     } catch (e) {
-        console.error('Failed to write routines file to Supabase storage', e)
+        console.error('   ✗ Failed to save to Supabase storage:', e)
     }
 
-    console.log(`✅ Scheduling complete. Conflicts: ${allConflicts.length}`)
     redirect("/?success=true")
 }
 
-// type for generated_routines.json
+// Type for generated_routines.json
 export type GeneratedRoutine = {
     metadata: {
         generatedAt: string
+        schedulingAttempts: number
         totalSections: number
         totalCourses: number
         totalTeachers: number
         totalClassrooms: number
-        unplacedSessions: number
-        capacityIssues: number
+        unplacedCourses: number
     }
     sectionTimetables: RoutineEntry[]
-    conflicts: Conflict[]
     teacherLoads: Array<{
         teacherId: string
         teacherName?: string
