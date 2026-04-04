@@ -187,11 +187,11 @@ function Content() {
           <div className="col-span-1 lg:col-span-12">
             <h2 className="text-4xl mb-10 font-headline font-black text-on-surface/70">ME-172 Section-C2 Group-3</h2>
             <h1
-              className="pb-4 text-3xl md:text-5xl font-black font-headline text-secondary tracking-tighter leading-[0.85] uppercase">
+              className="pb-4 text-2xl md:text-4xl font-black font-headline text-secondary tracking-tighter leading-[0.85] uppercase">
               Designed and Developed by
             </h1>
             <h1
-              className="pb-4 text-3xl md:text-5xl font-black font-headline text-primary tracking-tighter leading-[0.85] uppercase">
+              className="pb-4 text-2xl md:text-4xl font-black font-headline text-primary tracking-tighter leading-[0.85] uppercase">
               <span className="mr-4 generator-text-name">Syed Mohammad</span>
               Sowad
             </h1>
