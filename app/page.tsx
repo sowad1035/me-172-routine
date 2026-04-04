@@ -19,6 +19,14 @@ function Content() {
   const [teachers, setTeachers] = useState<{ id: string; name: string }[]>([]);
 
   useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth',
+    });
+  }, [searchParams]);
+
+  useEffect(() => {
     const fetchTeachers = async () => {
       const teachersList = await getAll();
       setTeachers(teachersList);
