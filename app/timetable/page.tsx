@@ -89,7 +89,7 @@ function Content() {
             setDownloading(true);
 
             // Get SVG element dimensions
-            const svgElement = svgContainerRef.current.querySelector('svg') as SVGElement;
+            const svgElement = svgContainerRef.current.querySelector('svg') as any;
             if (!svgElement) throw new Error("SVG element not found");
 
             const width = svgElement.viewBox?.baseVal?.width || svgElement.clientWidth || 1200;
@@ -151,7 +151,7 @@ function Content() {
             // Dynamic import of jsPDF
             const { jsPDF } = await import('jspdf');
 
-            const svgElement = svgContainerRef.current.querySelector('svg') as SVGElement;
+            const svgElement = svgContainerRef.current.querySelector('svg') as any;
             if (!svgElement) throw new Error("SVG element not found");
 
             const width = svgElement.viewBox?.baseVal?.width || svgElement.clientWidth || 1200;
