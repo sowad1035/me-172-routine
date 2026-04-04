@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useRef } from "react";
 import Link from "next/link";
 
 interface TimetablePageProps {
@@ -21,6 +21,9 @@ function Content() {
     const [svgContent, setSvgContent] = useState<string>("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [showDownloadMenu, setShowDownloadMenu] = useState(false);
+    const [downloading, setDownloading] = useState(false);
+    const svgContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const loadSVG = async () => {
@@ -52,10 +55,11 @@ function Content() {
         loadSVG();
     }, [dept, section, term]);
 
-    const downloadImage = async () => {
+    const downloadSVG = async () => {
         if (!dept || !section || !term) return;
 
         try {
+            setDownloading(true);
             const svgFilename = `routine_${dept}_${section}_${term}.svg`;
             const response = await fetch(`/api/timetable/${svgFilename}`);
 
@@ -70,8 +74,132 @@ function Content() {
             a.click();
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
+            setShowDownloadMenu(false);
         } catch (err) {
             console.error("Download failed:", err);
+        } finally {
+            setDownloading(false);
+        }
+    };
+
+    const downloadAsImage = async (format: 'png' | 'jpg') => {
+        if (!svgContainerRef.current) return;
+
+        try {
+            setDownloading(true);
+
+            // Get SVG element dimensions
+            const svgElement = svgContainerRef.current.querySelector('svg') as SVGElement;
+            if (!svgElement) throw new Error("SVG element not found");
+
+            const width = svgElement.viewBox?.baseVal?.width || svgElement.clientWidth || 1200;
+            const height = svgElement.viewBox?.baseVal?.height || svgElement.clientHeight || 800;
+
+            // Create canvas
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext('2d');
+            if (!ctx) throw new Error("Failed to get canvas context");
+
+            // Convert SVG to image
+            const svgString = new XMLSerializer().serializeToString(svgElement);
+            const svg = new Blob([svgString], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(svg);
+
+            const img = new Image();
+            img.onload = () => {
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, width, height);
+                ctx.drawImage(img, 0, 0);
+
+                canvas.toBlob((blob) => {
+                    if (!blob) return;
+
+                    const downloadUrl = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.download = `${section}_${term}_timetable.${format}`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(downloadUrl);
+                    setShowDownloadMenu(false);
+                    setDownloading(false);
+                }, `image/${format === 'jpg' ? 'jpeg' : format}`, format === 'jpg' ? 0.95 : 1);
+            };
+
+            img.onerror = () => {
+                console.error("Failed to load SVG as image");
+                setDownloading(false);
+            };
+
+            img.src = url;
+        } catch (err) {
+            console.error("Image download failed:", err);
+            setDownloading(false);
+        }
+    };
+
+    const downloadAsPDF = async () => {
+        if (!svgContainerRef.current) return;
+
+        try {
+            setDownloading(true);
+
+            // Dynamic import of jsPDF
+            const { jsPDF } = await import('jspdf');
+
+            const svgElement = svgContainerRef.current.querySelector('svg') as SVGElement;
+            if (!svgElement) throw new Error("SVG element not found");
+
+            const width = svgElement.viewBox?.baseVal?.width || svgElement.clientWidth || 1200;
+            const height = svgElement.viewBox?.baseVal?.height || svgElement.clientHeight || 800;
+
+            // Create canvas from SVG
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext('2d');
+            if (!ctx) throw new Error("Failed to get canvas context");
+
+            const svgString = new XMLSerializer().serializeToString(svgElement);
+            const svg = new Blob([svgString], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(svg);
+
+            const img = new Image();
+            img.onload = () => {
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, width, height);
+                ctx.drawImage(img, 0, 0);
+
+                // Create PDF - landscape orientation for better timetable fit
+                const pdf = new jsPDF({
+                    orientation: width > height ? 'landscape' : 'portrait',
+                    unit: 'px',
+                    format: [width, height]
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                pdf.addImage(imgData, 'PNG', 0, 0, width, height);
+                pdf.save(`${section}_${term}_timetable.pdf`);
+
+                URL.revokeObjectURL(url);
+                setShowDownloadMenu(false);
+                setDownloading(false);
+            };
+
+            img.onerror = () => {
+                console.error("Failed to load SVG for PDF");
+                setDownloading(false);
+            };
+
+            img.src = url;
+        } catch (err) {
+            console.error("PDF download failed:", err);
+            setDownloading(false);
         }
     };
 
@@ -157,16 +285,48 @@ function Content() {
                                 <span className="text-primary font-black">{dept}</span> • <span className="text-primary font-black">{section}</span> • <span className="text-primary font-black">{term}</span>
                             </p>
                         </div>
-                        <button
-                            onClick={downloadImage}
-                            className="bg-primary text-white font-label font-black uppercase tracking-[0.2em] px-8 py-4 flex items-center gap-3 hover:bg-stone-900 transition-all transform active:scale-95 border-2 border-primary whitespace-nowrap">
-                            <span className="material-symbols-outlined text-2xl">download</span>
-                            <span>Download</span>
-                        </button>
+                        <div className="relative">
+                            <button
+                                onClick={() => setShowDownloadMenu(!showDownloadMenu)}
+                                disabled={downloading}
+                                className="bg-primary text-white font-label font-black uppercase tracking-[0.2em] px-8 py-4 flex items-center gap-3 hover:bg-stone-900 transition-all transform active:scale-95 border-2 border-primary whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed">
+                                <span className="material-symbols-outlined text-2xl">download</span>
+                                <span>{downloading ? 'Downloading...' : 'Download'}</span>
+                            </button>
+
+                            {showDownloadMenu && (
+                                <div className="absolute top-full left-0 mt-2 bg-white border-2 border-primary shadow-lg z-50">
+                                    <button
+                                        onClick={downloadSVG}
+                                        disabled={downloading}
+                                        className="w-full text-left px-6 py-3 hover:bg-stone-100 font-label font-semibold text-primary border-b-2 border-primary last:border-b-0 uppercase text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                                        📄 Download as SVG
+                                    </button>
+                                    <button
+                                        onClick={() => downloadAsImage('png')}
+                                        disabled={downloading}
+                                        className="w-full text-left px-6 py-3 hover:bg-stone-100 font-label font-semibold text-primary border-b-2 border-primary last:border-b-0 uppercase text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                                        🖼️ Download as PNG
+                                    </button>
+                                    <button
+                                        onClick={() => downloadAsImage('jpg')}
+                                        disabled={downloading}
+                                        className="w-full text-left px-6 py-3 hover:bg-stone-100 font-label font-semibold text-primary border-b-2 border-primary last:border-b-0 uppercase text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                                        🖼️ Download as JPG
+                                    </button>
+                                    <button
+                                        onClick={downloadAsPDF}
+                                        disabled={downloading}
+                                        className="w-full text-left px-6 py-3 hover:bg-stone-100 font-label font-semibold text-primary uppercase text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                                        📕 Download as PDF
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     <div className="overflow-x-auto">
-                        <div className="bg-white border-2 border-primary overflow-hidden shadow-lg p-8">
+                        <div ref={svgContainerRef} className="bg-white border-2 border-primary overflow-hidden shadow-lg p-8">
                             <div className="overflow-x-auto" dangerouslySetInnerHTML={{ __html: svgContent }} />
                         </div>
                     </div>
